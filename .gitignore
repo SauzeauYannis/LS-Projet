@@ -45,7 +45,7 @@ nra.cache
 *.cmx
 *.cmxs
 *.cmxa
-
+*.out
 # ocamlbuild working directory
 _build/
 
