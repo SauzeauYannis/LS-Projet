@@ -4,18 +4,28 @@
   @author Frejoux Gaetan, Niord Mathieu, Sauzeau Yannis
 *)
 
+(**
+Print method 
+@param wanted : The wanted string
+@param exp : The exp_to_string
+*)
+let print_result (result : string) (wanted : string) : unit =
+  assert (String.equal result wanted);
+  Printf.printf "\nAttendu :\t%s\nObtenu :\t%s\n" wanted result
+;;
+
 (* 1. Un interpreteur pour un langage imperatif *)
 (* 1.1 Les expressions arithmetiques *)
 (* 1.1.1 Syntaxe abstraite*)
 
-(* === Question 1 === *)
+(* Question 1. *)
 
 (** Type éConstéré [operator] : Addition, Soustraction et Multiplication. *)
 type operator = ADD | MINUS | MULT;;
 (** Type [aexp] : Donne la syntaxe abstraite des expressions arithmétiques. *)
 type aexp = Const of int | Var of string | Ope of aexp * aexp * operator;;
 
-(* === Question 2 === *)
+(* Question 2. *)
 
 (* (2) *)
 let q2_01 = Const(2);;
@@ -78,23 +88,17 @@ let rec aexp_to_string (exp : aexp) : string =
 ;;
 
 (* 3.2 *)
-let print_result_aexp (wanted : string) (exp : aexp) : unit =
-  let res : string = aexp_to_string exp in (
-    assert (String.equal wanted res);
-    Printf.printf "\nAttendu :\t%s\nObtenu :\t%s\n" wanted res
-  )
-;;
 Printf.printf "Resultats de la question 3 :\n";;
 
-print_result_aexp "2" q2_01;;
-print_result_aexp "(2 + 3)" q2_02;;
-print_result_aexp "(2 - 5)" q2_03;;
-print_result_aexp "(3 * 6)" q2_04;;
-print_result_aexp "(2 + x)" q2_05;;
-print_result_aexp "(4 * y)" q2_06;;
-print_result_aexp "((3 * x) * x)" q2_07;;
-print_result_aexp "((5 * x) + (7 * y))" q2_08;;
-print_result_aexp "((6 * x) + (5 * (y * x)))" q2_09;;
+print_result (aexp_to_string q2_01) "2";;
+print_result (aexp_to_string q2_02) "(2 + 3)";;
+print_result (aexp_to_string q2_03) "(2 - 5)";;
+print_result (aexp_to_string q2_04) "(3 * 6)";;
+print_result (aexp_to_string q2_05) "(2 + x)";;
+print_result (aexp_to_string q2_06) "(4 * y)";;
+print_result (aexp_to_string q2_07) "((3 * x) * x)";;
+print_result (aexp_to_string q2_08) "((5 * x) + (7 * y))";;
+print_result (aexp_to_string q2_09) "((6 * x) + (5 * (y * x)))";;
 
 
 (** 1.1.2 Interprétation *)
@@ -196,8 +200,8 @@ type bexp =
   | Not of bexp 
   | And of bexp * bexp | Or of bexp * bexp 
   | Equal of aexp * aexp
-  | Le of aexp * aexp (* Le. means "less than or equal to". *)
-;; 
+  | Le o f aexp * aexp (* "Le" signifie "less or equal than to". *)
+;;
 
 (** Question 2. *)
 
@@ -250,15 +254,11 @@ let rec bexp_to_string (b : bexp) : string =
 ;;
 
 (* 3.2 *)
-let print_result_bexp (wanted : string) (exp : bexp) : unit =
-  let res : string = bexp_to_string exp in (
-    assert (String.equal wanted res);
-    Printf.printf "\nAttendu :\t%s\nObtenu :\t%s\n" wanted res
-  )
-;;
 
-print_result_bexp "vrai" bexp_q2_01;;
-print_result_bexp "(vrai et faux)" bexp_q2_02;;
+let b_s = bexp_to_string;;
+
+print_result_bexp "vrai" (b_s bexp_q2_01);;
+print_result_bexp "(vrai et faux)" (b_s bexp_q2_02);;
 print_result_bexp "non (vrai)" bexp_q2_03;;
 print_result_bexp "(vrai ou faux)" bexp_q2_04;;
 print_result_bexp "(2 = 4)" bexp_q2_05;;
