@@ -1,11 +1,22 @@
 (** 
   Un interpréteur pour un langage imperatif et un prouveur en logique de Hoare 
   et un prouveur en logique de Hoare.
-  @author Frejoux Gaetan, Niord Mathieu, Sauzeau Yannis
+  @author Frejoux Gaetan, Niord Mathieu & Sauzeau Yannis
 *)
 
 (**
-Print method 
+Print question header.
+@param exercise : Exercise number [int]
+@param section  : Section number [int]
+@param question : Question number [int]
+@return [string]
+*)
+let print_header (exercise : int) (section : int) (question : int) : string =
+  Printf.printf ("\n=== EXERCICE %d, Partie %d : Question %d ===\n\n") exercise section question
+;;
+
+(**
+Print result and check assertion.
 @param wanted : The wanted string
 @param exp : The exp_to_string
 *)
@@ -20,7 +31,7 @@ let print_result (result : string) (wanted : string) : unit =
 
 (* Question 1. *)
 
-(** Type éConstéré [operator] : Addition, Soustraction et Multiplication. *)
+(** Type énuméré [operator] : Addition, Soustraction et Multiplication. *)
 type operator = ADD | MINUS | MULT;;
 (** Type [aexp] : Donne la syntaxe abstraite des expressions arithmétiques. *)
 type aexp = Const of int | Var of string | Ope of aexp * aexp * operator;;
@@ -46,12 +57,11 @@ let q2_05 = Ope(Const(2), Var("x"), ADD);;
 let q2_06 = Ope(Const(4), Var("y"), MULT);;
 
 (* (3 * x * x) *)
-let q2_07 =
-  Ope(
-    Ope(Const(3), Var("x"), MULT),
-    Var("x"),
-    MULT
-  )
+let q2_07 = Ope(
+              Ope(Const(3), Var("x"), MULT),
+              Var("x"),
+              MULT
+            )
 ;;
 
 (* (5 * x + 7 * y) *)
@@ -59,14 +69,16 @@ let q2_08 = Ope(
               Ope(Const(5), Var("x"), MULT),
               Ope(Const(7), Var("y"), MULT),
               ADD
-            );;
+            )
+;;
 
 (* (6 * x + 5 * y * x) *)
 let q2_09 = Ope(
               Ope(Const(6), Var("x"), MULT),
               Ope(Const(5),Ope( Var("y"), Var("x"), MULT), MULT),
               ADD
-            );;
+            )
+;;
 
 
 (* Question 3. *)
@@ -88,7 +100,7 @@ let rec aexp_to_string (exp : aexp) : string =
 ;;
 
 (* 3.2 *)
-Printf.printf "Resultats de la question 3 :\n";;
+print_header 1 1 3;;
 
 print_result (aexp_to_string q2_01) "2";;
 print_result (aexp_to_string q2_02) "(2 + 3)";;
@@ -104,9 +116,11 @@ print_result (aexp_to_string q2_09) "((6 * x) + (5 * (y * x)))";;
 (** 1.1.2 Interprétation *)
 
 (** Question 4. *)
+
 type valuation = (string * int) list;;
 
 (** Question 5. *)
+
 let compute (e : aexp) : int =
   match e with
   | Const(elem) -> elem
@@ -137,22 +151,20 @@ let rec ainterp (e : aexp) (v : valuation) : int =
 ;;
 
 (** Question 6. *)
-let print_result_int (wanted : int) (result : int) : unit =
-  assert (wanted = result);
-  Printf.printf "\nAttendu :\t%d\nObtenu :\t%d\n" wanted (result)
-;;
 
-let q06_valuation : valuation = [("x", 5); ("y", 9)];;
+let aexp_valuation : valuation = [("x", 5); ("y", 9)];;
 
-print_result_int 2    (ainterp q2_01 q06_valuation);;
-print_result_int 5    (ainterp q2_02 q06_valuation);;
-print_result_int (-3) (ainterp q2_03 q06_valuation);;
-print_result_int 18   (ainterp q2_04 q06_valuation);;
-print_result_int 7    (ainterp q2_05 q06_valuation);;
-print_result_int 36   (ainterp q2_06 q06_valuation);;
-print_result_int 75   (ainterp q2_07 q06_valuation);;
-print_result_int 88   (ainterp q2_08 q06_valuation);;
-print_result_int 255  (ainterp q2_09 q06_valuation);;
+print_header 1 1 6;;
+
+print_result (to_string 2)    (aexp_to_string (ainterp q2_01 q06_valuation));;
+print_result (to_string 5)    (aexp_to_string (ainterp q2_02 q06_valuation));;
+print_result (to_string (-3)) (aexp_to_string (ainterp q2_03 q06_valuation));;
+print_result (to_string 18)   (aexp_to_string (ainterp q2_04 q06_valuation));;
+print_result (to_string 7)    (aexp_to_string (ainterp q2_05 q06_valuation));;
+print_result (to_string 36)   (aexp_to_string (ainterp q2_06 q06_valuation));;
+print_result (to_string 75)   (aexp_to_string (ainterp q2_07 q06_valuation));;
+print_result (to_string 88)   (aexp_to_string (ainterp q2_08 q06_valuation));;
+print_result (to_string 255)  (aexp_to_string (ainterp q2_09 q06_valuation));;
 
 
 (** 1.1.3 Substitutions *)
@@ -179,15 +191,17 @@ let y_subst : aexp = Ope(Var("z"), Const(2), ADD);;
 
 let subs = asubst_list ([("x", x_subst); ("y", y_subst)]);;
 
-print_result_aexp "2" (subs q2_01);;
-print_result_aexp "(2 + 3)" (subs q2_02);;
-print_result_aexp "(2 - 5)" (subs q2_03);;
-print_result_aexp "(3 * 6)" (subs q2_04);;
-print_result_aexp "(2 + 7)" (subs q2_05);;
-print_result_aexp "(4 * (z + 2))" (subs q2_06);;
-print_result_aexp "((3 * 7) * 7)" (subs q2_07);;
-print_result_aexp "((5 * 7) + (7 * (z + 2)))" (subs q2_08);;
-print_result_aexp "((6 * 7) + (5 * ((z + 2) * 7)))" (subs q2_09);;
+print_header 1 1 8;;
+
+print_result (aexp_to_string (subs q2_01)) "2";;
+print_result (aexp_to_string (subs q2_02)) "(2 + 3)";;
+print_result (aexp_to_string (subs q2_03)) "(2 - 5)";;
+print_result (aexp_to_string (subs q2_04)) "(3 * 6)";;
+print_result (aexp_to_string (subs q2_05)) "(2 + 7)";;
+print_result (aexp_to_string (subs q2_06)) "(4 * (z + 2))";;
+print_result (aexp_to_string (subs q2_07)) "((3 * 7) * 7)";;
+print_result (aexp_to_string (subs q2_08)) "((5 * 7) + (7 * (z + 2)))";;
+print_result (aexp_to_string (subs q2_09)) "((6 * 7) + (5 * ((z + 2) * 7)))";;
 
 (** 1.2 Les expressions booléennes *)
 
@@ -254,18 +268,17 @@ let rec bexp_to_string (b : bexp) : string =
 ;;
 
 (* 3.2 *)
+print_header 1 2 3;;
 
-let b_s = bexp_to_string;;
-
-print_result_bexp "vrai" (b_s bexp_q2_01);;
-print_result_bexp "(vrai et faux)" (b_s bexp_q2_02);;
-print_result_bexp "non (vrai)" bexp_q2_03;;
-print_result_bexp "(vrai ou faux)" bexp_q2_04;;
-print_result_bexp "(2 = 4)" bexp_q2_05;;
-print_result_bexp "((3 + 5) = (2 * 4))" bexp_q2_06;;
-print_result_bexp "((2 * x) = (y + 1))" bexp_q2_07;;
-print_result_bexp "(5 <= 7)" bexp_q2_08;;
-print_result_bexp "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))" bexp_q2_09;;
+print_result (bexp_to_string bexp_q2_01) "vrai";;
+print_result (bexp_to_string bexp_q2_02) "(vrai et faux)";;
+print_result (bexp_to_string bexp_q2_03) "non (vrai)";;
+print_result (bexp_to_string bexp_q2_04) "(vrai ou faux)";;
+print_result (bexp_to_string bexp_q2_05) "(2 = 4)" ;;
+print_result (bexp_to_string bexp_q2_06) "((3 + 5) = (2 * 4))";;
+print_result (bexp_to_string bexp_q2_07) "((2 * x) = (y + 1))";;
+print_result (bexp_to_string bexp_q2_08) "(5 <= 7)";;
+print_result (bexp_to_string bexp_q2_09) "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))";;
 
 (** 1.2.2 Interprétation *)
 
@@ -283,23 +296,20 @@ let rec binterp (b : bexp) (v : valuation) : bool =
 ;;
 
 (** Question 5. *)
-let print_result_bool (wanted : bool) (result : bool) : unit =
-  assert (wanted = result);
-  Printf.printf "\nAttendu :\t%B\nObtenu :\t%B\n" wanted (result)
-;;
-
 let bexp_valuation : valuation = [("x", 7); ("y", 3)];;
 
-print_result_bool true  (binterp bexp_q2_01 bexp_valuation);;
-print_result_bool false (binterp bexp_q2_02 bexp_valuation);;
-print_result_bool false (binterp bexp_q2_03 bexp_valuation);;
-print_result_bool true  (binterp bexp_q2_04 bexp_valuation);;
-print_result_bool false (binterp bexp_q2_05 bexp_valuation);;
-print_result_bool true  (binterp bexp_q2_06 bexp_valuation);;
-print_result_bool false (binterp bexp_q2_07 bexp_valuation);;
-print_result_bool true  (binterp bexp_q2_08 bexp_valuation);;
-print_result_bool true  (binterp bexp_q2_09 bexp_valuation);;
+print_header 1 2 5;;
 
+print_result (bexp_to_string (binterp bexp_q2_01 bexp_valuation)) true;;
+print_result (bexp_to_string (binterp bexp_q2_02 bexp_valuation)) false;;
+print_result (bexp_to_string (binterp bexp_q2_03 bexp_valuation)) false;;
+print_result (bexp_to_string (binterp bexp_q2_04 bexp_valuation)) true;;
+print_result (bexp_to_string (binterp bexp_q2_05 bexp_valuation)) false;;
+print_result (bexp_to_string (binterp bexp_q2_06 bexp_valuation)) true;;
+print_result (bexp_to_string (binterp bexp_q2_07 bexp_valuation)) false;;
+print_result (bexp_to_string (binterp bexp_q2_08 bexp_valuation)) true;;
+print_result (bexp_to_string (binterp bexp_q2_09 bexp_valuation)) true;;
+ 
 (** 1.3 Les commandes du langage *)
 
 (** 1.3.1 Syntaxe abstraite *)
