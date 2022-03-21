@@ -577,15 +577,103 @@ print_header_results 1 4 5 [
 (** 1.4.3 Substitutions *)
 
 (** Question 6. *)
+let rec psubst (var : string) (subst : aexp) (p : t_prop) : t_prop =
+  match p with
+  | Not(p1) -> Not(psubst var subst p1)
+  | And(p1,p2) -> And((psubst var subst p1), (psubst var subst p2))
+  | Or(p1,p2) -> Or((psubst var subst p1), (psubst var subst p2))
+  | Equal(a1, a2) -> Equal((asubst var subst a1), (asubst var subst a2))
+  | Le(a1, a2) -> Le((asubst var subst a1), (asubst var subst a2))
+  | Impl(p1,p2) -> Impl((psubst var subst p1), (psubst var subst p2))
+  | _ -> p 
+;;
 
-(*
-aexp
-bexp
-prog
-prop
-*)
+let psubst_list (subs : (string * aexp) list) (p : t_prop) : t_prop =
+  let res : t_prop ref = ref p in
+    List.iter (fun (s, e) -> res := (psubst s e !res)) subs;
+    !res
+;;
+
+(* Question 7. *)
+
+let x_subst : aexp = Ope(Const(3), Var("y"), MULT);;
+let y_subst : aexp = Ope(Var("k"), Const(2), ADD);;
+
+let subs = psubst_list ([("x", x_subst); ("y", y_subst)]);;
+
+print_header_results 1 4 7 [
+    ((subs prop_q2_01), "vrai");
+    ((subs prop_q2_02), "(vrai et faux)");
+    ((subs prop_q2_03), "non (vrai)");
+    ((subs prop_q2_04), "(vrai ou faux)");
+    ((subs prop_q2_05), "(faux implique (vrai ou faux))");
+    ((subs prop_q2_06), "(2 = 4)");
+    ((subs prop_q2_07), "((3 + 5) = (2 * 4))");
+    ((subs prop_q2_08), "((2 * (3 * (k + 2))) = ((k + 2) + 1))");
+    ((subs prop_q2_09), "((3 + (3 * (k + 2))) <= (4 * (k + 2)))");
+    ((subs prop_q2_10), "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
+    ((subs prop_q2_11), "(((3 * (k + 2)) = 1) implique ((k + 2) <= 0))");
+  ] (prop_to_string)
+;;
 
 (** 1.4.4 Les triplets de Hoare *)
+
+(* Question 8. *)
+type hoare_triple = Hoare of t_prop * prog * t_prop;;
+
+(* Question 9. *)
+
+(* {x = 2} skip {x = 2} *) 
+let hoare_q9_01 = Hoare(
+  Equal(Var("x"), Const(2)), 
+  Skip, 
+  Equal(Var("x"), Const(2)))
+;;
+
+(* {x = 2} x := 3 {x <= 3} *)
+let hoare_q9_02 = Hoare(
+  Equal(Var("x"), Const(2)), 
+  Affectation("x", Const(3)), 
+  Le(Var("x"), Const(3)))
+;;
+
+(* {True} if x <= 0 then r := 0-x else r := x {0 <= r} *)
+let hoare_q9_03 = Hoare
+(
+  True,
+  Condition
+  (
+    Le(Var("x"), Const(0)),
+    Affectation("r", Ope(Const(0),Var("x"),MINUS)),
+    Affectation("r", Var("x"))
+  ),
+  Le(Const(0), Var("r"))
+) 
+;;
+
+let prog_fact (n : int) : prog = Loop(
+    Const(n), 
+    Sequence
+    (
+      Affectation("x", Ope(Var("x"), Var("i"), MULT)),
+      Affectation("i", Ope(Var("i"), Const(1), ADD))
+    )
+  )
+;;
+
+let fact (n : int) : int =
+  let v : valuation = exec (prog_fact n) [("x", 1); ("i", 1)] in
+  var_to_const ("x") v
+;;
+
+(* {in = 5 et out = 1} fact {in = 0 et out = 120} *)
+let hoare_q9_03 = Hoare
+(
+  And(Equal(Var("in"), Const(5)), Equal(Var("out"), Const(1))),
+  (prog_fact "in" "out"),
+  post
+)
+;;
 (** 1.4.5 Validité d’un triplet de Hoare *)
 
 
