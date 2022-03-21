@@ -42,25 +42,25 @@ type aexp = Const of int | Var of string | Ope of aexp * aexp * operator;;
 (* Question 2. *)
 
 (* (2) *)
-let q2_01 = Const(2);;
+let aexp_01 = Const(2);;
 
 (* (2 + 3) *)
-let q2_02 = Ope(Const(2), Const(3), ADD);;
+let aexp_02 = Ope(Const(2), Const(3), ADD);;
 
 (* (2 - 5) *)
-let q2_03 = Ope(Const(2), Const(5), MINUS);;
+let aexp_03 = Ope(Const(2), Const(5), MINUS);;
 
 (* (3 * 6) *)
-let q2_04 = Ope(Const(3), Const(6), MULT);;
+let aexp_04 = Ope(Const(3), Const(6), MULT);;
 
 (* (2 + x) *)
-let q2_05 = Ope(Const(2), Var("x"), ADD);;
+let aexp_05 = Ope(Const(2), Var("x"), ADD);;
 
 (* (4 * y) *)
-let q2_06 = Ope(Const(4), Var("y"), MULT);;
+let aexp_06 = Ope(Const(4), Var("y"), MULT);;
 
 (* (3 * x * x) *)
-let q2_07 = Ope(
+let aexp_07 = Ope(
               Ope(Const(3), Var("x"), MULT),
               Var("x"),
               MULT
@@ -68,7 +68,7 @@ let q2_07 = Ope(
 ;;
 
 (* (5 * x + 7 * y) *)
-let q2_08 = Ope(
+let aexp_08 = Ope(
               Ope(Const(5), Var("x"), MULT),
               Ope(Const(7), Var("y"), MULT),
               ADD
@@ -76,7 +76,7 @@ let q2_08 = Ope(
 ;;
 
 (* (6 * x + 5 * y * x) *)
-let q2_09 = Ope(
+let aexp_09 = Ope(
               Ope(Const(6), Var("x"), MULT),
               Ope(Const(5),Ope( Var("y"), Var("x"), MULT), MULT),
               ADD
@@ -104,15 +104,15 @@ let rec aexp_to_string (exp : aexp) : string =
 
 (* 3.2 *)
 print_header_results 1 1 3 [
-    (q2_01, "2");
-    (q2_02, "(2 + 3)");
-    (q2_03, "(2 - 5)");
-    (q2_04, "(3 * 6)");
-    (q2_05, "(2 + x)");
-    (q2_06, "(4 * y)");
-    (q2_07, "((3 * x) * x)");
-    (q2_08, "((5 * x) + (7 * y))");
-    (q2_09, "((6 * x) + (5 * (y * x)))");
+    (aexp_01, "2");
+    (aexp_02, "(2 + 3)");
+    (aexp_03, "(2 - 5)");
+    (aexp_04, "(3 * 6)");
+    (aexp_05, "(2 + x)");
+    (aexp_06, "(4 * y)");
+    (aexp_07, "((3 * x) * x)");
+    (aexp_08, "((5 * x) + (7 * y))");
+    (aexp_09, "((6 * x) + (5 * (y * x)))");
   ] (aexp_to_string)
 ;;
 
@@ -139,7 +139,7 @@ let compute (e : aexp) : int =
 ;;
 
 let var_to_const (var : string) (v : valuation) : int =
-  let _, value = List.find (fun (x, y) -> String.equal var x) v in
+  let _, value = List.find (fun (x, _) -> String.equal var x) v in
   value
 ;;
 
@@ -158,15 +158,15 @@ let rec ainterp (e : aexp) (v : valuation) : int =
 let aexp_valuation : valuation = [("x", 5); ("y", 9)];;
 
 print_header_results 1 1 6 [
-    ((ainterp q2_01 aexp_valuation), "2");
-    ((ainterp q2_02 aexp_valuation), "5");
-    ((ainterp q2_03 aexp_valuation), "-3");
-    ((ainterp q2_04 aexp_valuation), "18");
-    ((ainterp q2_05 aexp_valuation), "7");
-    ((ainterp q2_06 aexp_valuation), "36");
-    ((ainterp q2_07 aexp_valuation), "75");
-    ((ainterp q2_08 aexp_valuation), "88");
-    ((ainterp q2_09 aexp_valuation), "255");
+    ((ainterp aexp_01 aexp_valuation), "2");
+    ((ainterp aexp_02 aexp_valuation), "5");
+    ((ainterp aexp_03 aexp_valuation), "-3");
+    ((ainterp aexp_04 aexp_valuation), "18");
+    ((ainterp aexp_05 aexp_valuation), "7");
+    ((ainterp aexp_06 aexp_valuation), "36");
+    ((ainterp aexp_07 aexp_valuation), "75");
+    ((ainterp aexp_08 aexp_valuation), "88");
+    ((ainterp aexp_09 aexp_valuation), "255");
   ] (Int.to_string)
 ;;
 
@@ -196,15 +196,15 @@ let y_subst : aexp = Ope(Var("z"), Const(2), ADD);;
 let subs = asubst_list ([("x", x_subst); ("y", y_subst)]);;
 
 print_header_results 1 1 8 [
-    ((subs q2_01), "2");
-    ((subs q2_02), "(2 + 3)");
-    ((subs q2_03), "(2 - 5)");
-    ((subs q2_04), "(3 * 6)");
-    ((subs q2_05), "(2 + 7)");
-    ((subs q2_06), "(4 * (z + 2))");
-    ((subs q2_07), "((3 * 7) * 7)");
-    ((subs q2_08), "((5 * 7) + (7 * (z + 2)))");
-    ((subs q2_09), "((6 * 7) + (5 * ((z + 2) * 7)))");
+    ((subs aexp_01), "2");
+    ((subs aexp_02), "(2 + 3)");
+    ((subs aexp_03), "(2 - 5)");
+    ((subs aexp_04), "(3 * 6)");
+    ((subs aexp_05), "(2 + 7)");
+    ((subs aexp_06), "(4 * (z + 2))");
+    ((subs aexp_07), "((3 * 7) * 7)");
+    ((subs aexp_08), "((5 * 7) + (7 * (z + 2)))");
+    ((subs aexp_09), "((6 * 7) + (5 * ((z + 2) * 7)))");
   ] (aexp_to_string)
 ;;
 
@@ -226,35 +226,35 @@ type bexp =
 (** Question 2. *)
 
 (* (vrai) *)
-let bexp_q2_01 : bexp = True;;
+let bexp_01 : bexp = True;;
 
 (* (vrai et faux) *)
-let bexp_q2_02 : bexp = And(True, False);;
+let bexp_02 : bexp = And(True, False);;
 
 (* (non vrai) *)
-let bexp_q2_03 : bexp = Not(True);;
+let bexp_03 : bexp = Not(True);;
 
 (* (vrai ou faux) *)
-let bexp_q2_04 : bexp = Or(True, False);;
+let bexp_04 : bexp = Or(True, False);;
 
 (* (2 = 4) *)
-let bexp_q2_05 : bexp = Equal(Const(2), Const(4));;
+let bexp_05 : bexp = Equal(Const(2), Const(4));;
 
 (* (3 + 5 = 2 * 4) *)
-let bexp_q2_06 : bexp = Equal(
+let bexp_06 : bexp = Equal(
   Ope(Const(3), Const(5), ADD), 
   Ope(Const(2), Const(4), MULT));;
 
 (* (2 * x = y + 1) *)
-let bexp_q2_07 : bexp = Equal(
+let bexp_07 : bexp = Equal(
   Ope(Const(2), Var("x"), MULT), 
   Ope(Var("y"), Const(1), ADD));;
 
 (* (5 <= 7) *)
-let bexp_q2_08 : bexp = Le(Const(5), Const(7));;
+let bexp_08 : bexp = Le(Const(5), Const(7));;
 
 (* (8 + 9 <= 4 * 5) et (3 + x <= 4 * y) *)
-let bexp_q2_09 : bexp = And(
+let bexp_09 : bexp = And(
   Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)),
   Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4), Var("y"), MULT))
   );;
@@ -267,23 +267,23 @@ let rec bexp_to_string (b : bexp) : string =
   | True -> "vrai"
   | False -> "faux"
   | Not(elem) -> "non (" ^ bexp_to_string elem ^ ")"
-  | And(l,r) -> "(" ^ (bexp_to_string l) ^ " et " ^ (bexp_to_string r) ^ ")"
-  | Or(l,r) -> "(" ^ (bexp_to_string l) ^ " ou " ^ (bexp_to_string r) ^ ")"
-  | Equal(l,r) -> "(" ^ (aexp_to_string l) ^ " = " ^ (aexp_to_string r) ^ ")"
-  | Le(l,r) -> "(" ^ (aexp_to_string l) ^ " <= " ^ (aexp_to_string r) ^ ")"
+  | And(l, r) -> "(" ^ (bexp_to_string l) ^ " et " ^ (bexp_to_string r) ^ ")"
+  | Or(l, r) -> "(" ^ (bexp_to_string l) ^ " ou " ^ (bexp_to_string r) ^ ")"
+  | Equal(l, r) -> "(" ^ (aexp_to_string l) ^ " = " ^ (aexp_to_string r) ^ ")"
+  | Le(l, r) -> "(" ^ (aexp_to_string l) ^ " <= " ^ (aexp_to_string r) ^ ")"
 ;;
 
 (* 3.2 *)
 print_header_results 1 2 3 [
-    (bexp_q2_01, "vrai");
-    (bexp_q2_02, "(vrai et faux)");
-    (bexp_q2_03, "non (vrai)");
-    (bexp_q2_04, "(vrai ou faux)");
-    (bexp_q2_05, "(2 = 4)");
-    (bexp_q2_06, "((3 + 5) = (2 * 4))");
-    (bexp_q2_07, "((2 * x) = (y + 1))");
-    (bexp_q2_08, "(5 <= 7)");
-    (bexp_q2_09, "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))");
+    (bexp_01, "vrai");
+    (bexp_02, "(vrai et faux)");
+    (bexp_03, "non (vrai)");
+    (bexp_04, "(vrai ou faux)");
+    (bexp_05, "(2 = 4)");
+    (bexp_06, "((3 + 5) = (2 * 4))");
+    (bexp_07, "((2 * x) = (y + 1))");
+    (bexp_08, "(5 <= 7)");
+    (bexp_09, "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))");
   ] (bexp_to_string)
 ;;
 
@@ -307,15 +307,15 @@ let rec binterp (b : bexp) (v : valuation) : bool =
 let bexp_valuation : valuation = [("x", 7); ("y", 3)];;
 
 print_header_results 1 2 5 [
-    ((binterp bexp_q2_01 bexp_valuation), "true");
-    ((binterp bexp_q2_02 bexp_valuation), "false");
-    ((binterp bexp_q2_03 bexp_valuation), "false");
-    ((binterp bexp_q2_04 bexp_valuation), "true");
-    ((binterp bexp_q2_05 bexp_valuation), "false");
-    ((binterp bexp_q2_06 bexp_valuation), "true");
-    ((binterp bexp_q2_07 bexp_valuation), "false");
-    ((binterp bexp_q2_08 bexp_valuation), "true");
-    ((binterp bexp_q2_09 bexp_valuation), "true");
+    ((binterp bexp_01 bexp_valuation), "true");
+    ((binterp bexp_02 bexp_valuation), "false");
+    ((binterp bexp_03 bexp_valuation), "false");
+    ((binterp bexp_04 bexp_valuation), "true");
+    ((binterp bexp_05 bexp_valuation), "false");
+    ((binterp bexp_06 bexp_valuation), "true");
+    ((binterp bexp_07 bexp_valuation), "false");
+    ((binterp bexp_08 bexp_valuation), "true");
+    ((binterp bexp_09 bexp_valuation), "true");
   ] (Bool.to_string)
 ;;
 
@@ -327,43 +327,43 @@ print_header_results 1 2 5 [
 
 type prog = 
   | Skip
-  | Affectation of string * aexp
-  | Sequence of prog * prog
-  | Condition of bexp * prog * prog
+  | Aff of string * aexp
+  | Seq of prog * prog
+  | Cond of bexp * prog * prog
   | Loop of aexp * prog
 ;;
 
 (** Question 2. *)
 
 (* (y := 7) *)
-let prog_q2_01 = Affectation("y", Const(7));;
+let prog_01 = Aff("y", Const(7));;
 
 (* (z := 3 + 4 ; x := 2 * x) *)
-let prog_q2_02 = Sequence
+let prog_02 = Seq
 (
-  Affectation("z", Ope(Const(3), Const(4), ADD)),
-  Affectation("x", Ope(Const(2), Var("x"), MULT))
+  Aff("z", Ope(Const(3), Const(4), ADD)),
+  Aff("x", Ope(Const(2), Var("x"), MULT))
 )
 ;;
 
 (* (n := 3; if (n <= 4) then n:= 2 * n + 3 else n := n + 1) *)
-let prog_q2_03 = Sequence
+let prog_03 = Seq
 (
-  Affectation("n", Const(3)),
-  Condition
+  Aff("n", Const(3)),
+  Cond
   (
     Le(Var("n"), Const(4)), 
-    Affectation("n", Ope(Ope(Const(2), Var("n"), MULT), Const(3), ADD)), 
-    Affectation("n", Ope(Var("n"), Const(1), ADD))
+    Aff("n", Ope(Ope(Const(2), Var("n"), MULT), Const(3), ADD)), 
+    Aff("n", Ope(Var("n"), Const(1), ADD))
   )
 )
 ;;
 
 (* (repeat 10 do x := x+1 od) *)
-let prog_q2_04 = Loop
+let prog_04 = Loop
 (
   Const(10), 
-  Affectation("x", Ope(Var("x"), Const(1), ADD))
+  Aff("x", Ope(Var("x"), Const(1), ADD))
 )
 ;;
 
@@ -372,17 +372,17 @@ let prog_q2_04 = Loop
 let rec prog_to_string (program: prog) : string =
   match program with
   | Skip -> ""
-  | Affectation(v, e) -> v ^ " := " ^ (aexp_to_string e)
-  | Sequence(p1, p2) -> (prog_to_string p1) ^ ";\n" ^ (prog_to_string p2)
-  | Condition(b, p1, p2) -> "if (" ^ (bexp_to_string b) ^ ")\nthen " ^ (prog_to_string p1) ^ "\nelse " ^ (prog_to_string p2)
+  | Aff(v, e) -> v ^ " := " ^ (aexp_to_string e)
+  | Seq(p1, p2) -> (prog_to_string p1) ^ ";\n" ^ (prog_to_string p2)
+  | Cond(b, p1, p2) -> "if (" ^ (bexp_to_string b) ^ ")\nthen " ^ (prog_to_string p1) ^ "\nelse " ^ (prog_to_string p2)
   | Loop(e, p) -> "repeat " ^ (aexp_to_string e) ^ " do\n" ^ (prog_to_string p) ^ "\nod"
 ;;
 
 print_header_results 1 3 3 [
-    (prog_q2_01, "y := 7");
-    (prog_q2_02, "z := (3 + 4);\nx := (2 * x)");
-    (prog_q2_03, "n := 3;\nif ((n <= 4))\nthen n := ((2 * n) + 3)\nelse n := (n + 1)");
-    (prog_q2_04, "repeat 10 do\nx := (x + 1)\nod");
+    (prog_01, "y := 7");
+    (prog_02, "z := (3 + 4);\nx := (2 * x)");
+    (prog_03, "n := 3;\nif ((n <= 4))\nthen n := ((2 * n) + 3)\nelse n := (n + 1)");
+    (prog_04, "repeat 10 do\nx := (x + 1)\nod");
   ] (prog_to_string)
 ;;
 
@@ -405,41 +405,60 @@ Printf.printf "10 fois => f: x -> x + 2: %d\n\n" ((selfcompose (fun x -> x + 2) 
 let rec exec (p : prog) (v : valuation) : valuation =
   match p with
   | Skip -> v
-  | Affectation(v1, e) -> (v1, (ainterp e v))::v
-  | Sequence(p1, p2) -> exec p2 (exec p1 v)
-  | Condition(b, p1, p2) -> if (binterp b v) then (exec p1 v) else (exec p2 v)
+  | Aff(v1, e) -> (v1, (ainterp e v))::v
+  | Seq(p1, p2) -> exec p2 (exec p1 v)
+  | Cond(b, p1, p2) -> if (binterp b v) then (exec p1 v) else (exec p2 v)
   | Loop(e, p1) -> (selfcompose (fun nv -> exec p1 nv) (ainterp e v)) (v)
 ;;
 
 (** Question 7. *)
 
-let prog_fact (n : int) : prog = Loop(
-    Const(n), 
-    Sequence
-    (
-      Affectation("x", Ope(Var("x"), Var("i"), MULT)),
-      Affectation("i", Ope(Var("i"), Const(1), ADD))
+let prog_fact : prog = 
+  Seq
+  ( 
+    Aff("i", Const(1)),
+    Loop(
+      Var("in"), 
+      Seq
+      (
+        Aff("out", Ope(Var("out"), Var("i"), MULT)),
+        Seq(
+          Aff("i", Ope(Var("i"), Const(1), ADD)),
+          Aff("in", Ope(Var("in"), Const(1), MINUS))
+        )
+      )
     )
   )
 ;;
 
 let fact (n : int) : int =
-  let v : valuation = exec (prog_fact n) [("x", 1); ("i", 1)] in
-  var_to_const ("x") v
+  let v : valuation = exec prog_fact [("in", n); ("out", 1)] in
+  var_to_const ("out") v
 ;;
 
 Printf.printf "Factorielle de 5 = %d\n\n" (fact 5);;
 
-let prog_fibo (n : int) : prog = Loop(
-    Const(n), 
-    Sequence
-    (
-      Affectation("t", Var("a")),
-      Sequence
-      (
-        Affectation("a", Var("b")),
-        Affectation("b", Ope(Var("t"), Var("b"), ADD))
-      )
+let prog_fibo : prog =
+  Seq
+  ( 
+    Aff("b", Const(1)),
+    Seq (
+      Aff("t", Const(0)),
+      Loop(
+        Var("in"), 
+        Seq
+        (
+          Aff("t", Var("out")),
+          Seq
+          (
+            Aff("out", Var("b")),
+            Seq(
+              Aff("b", Ope(Var("t"), Var("b"), ADD)),
+              Aff("in", Ope(Var("in"), Const(1), MINUS))
+            )
+          )
+        )
+      ) 
     )
   )
 ;;
@@ -448,8 +467,8 @@ let fibo (n : int) : int =
   if n <= 0 then 0
   else if n = 1 then 1
   else
-  let v : valuation = exec (prog_fibo n) [("a", 0); ("b", 1); ("t", 0)] in
-    var_to_const ("a") v
+  let v : valuation = exec prog_fibo [("in", n); ("out", 0)] in
+    var_to_const ("out") v
 ;;
 
 Printf.printf "8ème nombre de la suite de Fibonacci = %d\n\n" (fibo 8);;
@@ -472,40 +491,40 @@ type t_prop =
 (** Question 2. *)
 
 (* (vrai) *)
-let prop_q2_01 : t_prop = True;;
+let prop_01 : t_prop = True;;
 
 (* (vrai et faux) *)
-let prop_q2_02 : t_prop = And(True, False);;
+let prop_02 : t_prop = And(True, False);;
 
 (* (non vrai) *)
-let prop_q2_03 : t_prop = Not(True);;
+let prop_03 : t_prop = Not(True);;
 
 (* (vrai ou faux) *)
-let prop_q2_04 : t_prop = Or(True, False);;
+let prop_04 : t_prop = Or(True, False);;
 
 (* (faux implique ) *)
-let prop_q2_05 : t_prop = Impl(False, Or(True, False));;
+let prop_05 : t_prop = Impl(False, Or(True, False));;
 
 (* (2 = 4) *)
-let prop_q2_06 : t_prop = Equal(Const(2), Const(4));;
+let prop_06 : t_prop = Equal(Const(2), Const(4));;
 
 (* (3 + 5 = 2 * 4) *)
-let prop_q2_07 : t_prop = Equal(Ope(Const(3), Const(5), ADD), Ope(Const(2), Const(4), MULT));;
+let prop_07 : t_prop = Equal(Ope(Const(3), Const(5), ADD), Ope(Const(2), Const(4), MULT));;
 
 (* (2 * x = y + 1) *)
-let prop_q2_08 : t_prop = Equal(Ope(Const(2), Var("x"), MULT), Ope(Var("y") , Const(1), ADD));;
+let prop_08 : t_prop = Equal(Ope(Const(2), Var("x"), MULT), Ope(Var("y") , Const(1), ADD));;
 
 (* (3 + x <= 4 * y) *)
-let prop_q2_09 : t_prop = Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4) , Var("y"), MULT));;
+let prop_09 : t_prop = Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4) , Var("y"), MULT));;
 
 (* (5 <= 7) et (8 + 9 <= 4 * 5) *)
-let prop_q2_10 : t_prop = And(
+let prop_10 : t_prop = And(
   Le(Const(5), Const(7)),
   Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)
   ));;
 
 (* (x = 1) implique (y <= 0) *)
-let prop_q2_11 : t_prop = Impl(
+let prop_11 : t_prop = Impl(
   Equal(Var("x"), Const(1)),
   Le(Var("y"), Const(0))
 );;
@@ -526,17 +545,17 @@ let rec prop_to_string (prop : t_prop) : string =
 
 
 print_header_results 1 4 1 ([
-    (prop_q2_01, "vrai");
-    (prop_q2_02, "(vrai et faux)");
-    (prop_q2_03, "non (vrai)");
-    (prop_q2_04, "(vrai ou faux)");
-    (prop_q2_05, "(faux implique (vrai ou faux))");
-    (prop_q2_06, "(2 = 4)");
-    (prop_q2_07, "((3 + 5) = (2 * 4))");
-    (prop_q2_08, "((2 * x) = (y + 1))");
-    (prop_q2_09, "((3 + x) <= (4 * y))");
-    (prop_q2_10, "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
-    (prop_q2_11, "((x = 1) implique (y <= 0))");
+    (prop_01, "vrai");
+    (prop_02, "(vrai et faux)");
+    (prop_03, "non (vrai)");
+    (prop_04, "(vrai ou faux)");
+    (prop_05, "(faux implique (vrai ou faux))");
+    (prop_06, "(2 = 4)");
+    (prop_07, "((3 + 5) = (2 * 4))");
+    (prop_08, "((2 * x) = (y + 1))");
+    (prop_09, "((3 + x) <= (4 * y))");
+    (prop_10, "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
+    (prop_11, "((x = 1) implique (y <= 0))");
   ]) (prop_to_string)
 ;;
 
@@ -559,20 +578,19 @@ let rec pinterp (prop : t_prop) (v : valuation) : bool =
 let t_prop_valuation : valuation = [("x", 7); ("y", 3)];;
 
 print_header_results 1 4 5 [
-    ((pinterp prop_q2_01 t_prop_valuation), "true");
-    ((pinterp prop_q2_02 t_prop_valuation), "false");
-    ((pinterp prop_q2_03 t_prop_valuation), "false");
-    ((pinterp prop_q2_04 t_prop_valuation), "true");
-    ((pinterp prop_q2_05 t_prop_valuation), "true");
-    ((pinterp prop_q2_06 t_prop_valuation), "false");
-    ((pinterp prop_q2_07 t_prop_valuation), "true");
-    ((pinterp prop_q2_08 t_prop_valuation), "false");
-    ((pinterp prop_q2_09 t_prop_valuation), "true");
-    ((pinterp prop_q2_10 t_prop_valuation), "true");
-    ((pinterp prop_q2_11 t_prop_valuation), "true");
+    ((pinterp prop_01 t_prop_valuation), "true");
+    ((pinterp prop_02 t_prop_valuation), "false");
+    ((pinterp prop_03 t_prop_valuation), "false");
+    ((pinterp prop_04 t_prop_valuation), "true");
+    ((pinterp prop_05 t_prop_valuation), "true");
+    ((pinterp prop_06 t_prop_valuation), "false");
+    ((pinterp prop_07 t_prop_valuation), "true");
+    ((pinterp prop_08 t_prop_valuation), "false");
+    ((pinterp prop_09 t_prop_valuation), "true");
+    ((pinterp prop_10 t_prop_valuation), "true");
+    ((pinterp prop_11 t_prop_valuation), "true");
   ] (Bool.to_string)
 ;;
-
 
 (** 1.4.3 Substitutions *)
 
@@ -580,12 +598,12 @@ print_header_results 1 4 5 [
 let rec psubst (var : string) (subst : aexp) (p : t_prop) : t_prop =
   match p with
   | Not(p1) -> Not(psubst var subst p1)
-  | And(p1,p2) -> And((psubst var subst p1), (psubst var subst p2))
-  | Or(p1,p2) -> Or((psubst var subst p1), (psubst var subst p2))
+  | And(p1, p2) -> And((psubst var subst p1), (psubst var subst p2))
+  | Or(p1, p2) -> Or((psubst var subst p1), (psubst var subst p2))
   | Equal(a1, a2) -> Equal((asubst var subst a1), (asubst var subst a2))
   | Le(a1, a2) -> Le((asubst var subst a1), (asubst var subst a2))
-  | Impl(p1,p2) -> Impl((psubst var subst p1), (psubst var subst p2))
-  | _ -> p 
+  | Impl(p1, p2) -> Impl((psubst var subst p1), (psubst var subst p2))
+  | _ -> p
 ;;
 
 let psubst_list (subs : (string * aexp) list) (p : t_prop) : t_prop =
@@ -602,79 +620,83 @@ let y_subst : aexp = Ope(Var("k"), Const(2), ADD);;
 let subs = psubst_list ([("x", x_subst); ("y", y_subst)]);;
 
 print_header_results 1 4 7 [
-    ((subs prop_q2_01), "vrai");
-    ((subs prop_q2_02), "(vrai et faux)");
-    ((subs prop_q2_03), "non (vrai)");
-    ((subs prop_q2_04), "(vrai ou faux)");
-    ((subs prop_q2_05), "(faux implique (vrai ou faux))");
-    ((subs prop_q2_06), "(2 = 4)");
-    ((subs prop_q2_07), "((3 + 5) = (2 * 4))");
-    ((subs prop_q2_08), "((2 * (3 * (k + 2))) = ((k + 2) + 1))");
-    ((subs prop_q2_09), "((3 + (3 * (k + 2))) <= (4 * (k + 2)))");
-    ((subs prop_q2_10), "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
-    ((subs prop_q2_11), "(((3 * (k + 2)) = 1) implique ((k + 2) <= 0))");
+    ((subs prop_01), "vrai");
+    ((subs prop_02), "(vrai et faux)");
+    ((subs prop_03), "non (vrai)");
+    ((subs prop_04), "(vrai ou faux)");
+    ((subs prop_05), "(faux implique (vrai ou faux))");
+    ((subs prop_06), "(2 = 4)");
+    ((subs prop_07), "((3 + 5) = (2 * 4))");
+    ((subs prop_08), "((2 * (3 * (k + 2))) = ((k + 2) + 1))");
+    ((subs prop_09), "((3 + (3 * (k + 2))) <= (4 * (k + 2)))");
+    ((subs prop_10), "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
+    ((subs prop_11), "(((3 * (k + 2)) = 1) implique ((k + 2) <= 0))");
   ] (prop_to_string)
 ;;
 
 (** 1.4.4 Les triplets de Hoare *)
 
 (* Question 8. *)
-type hoare_triple = Hoare of t_prop * prog * t_prop;;
+type hoare_triple = t_prop * prog * t_prop;;
 
 (* Question 9. *)
 
 (* {x = 2} skip {x = 2} *) 
-let hoare_q9_01 = Hoare(
+let hoare_01 = (
   Equal(Var("x"), Const(2)), 
   Skip, 
   Equal(Var("x"), Const(2)))
 ;;
 
 (* {x = 2} x := 3 {x <= 3} *)
-let hoare_q9_02 = Hoare(
+let hoare_02 = (
   Equal(Var("x"), Const(2)), 
-  Affectation("x", Const(3)), 
+  Aff("x", Const(3)), 
   Le(Var("x"), Const(3)))
 ;;
 
 (* {True} if x <= 0 then r := 0-x else r := x {0 <= r} *)
-let hoare_q9_03 = Hoare
+let hoare_03 =
 (
   True,
-  Condition
+  Cond
   (
     Le(Var("x"), Const(0)),
-    Affectation("r", Ope(Const(0),Var("x"),MINUS)),
-    Affectation("r", Var("x"))
+    Aff("r", Ope(Const(0),Var("x"),MINUS)),
+    Aff("r", Var("x"))
   ),
   Le(Const(0), Var("r"))
 ) 
 ;;
 
-let prog_fact (n : int) : prog = Loop(
-    Const(n), 
-    Sequence
-    (
-      Affectation("x", Ope(Var("x"), Var("i"), MULT)),
-      Affectation("i", Ope(Var("i"), Const(1), ADD))
-    )
-  )
-;;
-
-let fact (n : int) : int =
-  let v : valuation = exec (prog_fact n) [("x", 1); ("i", 1)] in
-  var_to_const ("x") v
-;;
-
 (* {in = 5 et out = 1} fact {in = 0 et out = 120} *)
-let hoare_q9_03 = Hoare
+let hoare_04 = 
 (
   And(Equal(Var("in"), Const(5)), Equal(Var("out"), Const(1))),
-  (prog_fact "in" "out"),
-  post
+  prog_fact,
+  And(Equal(Var("in"), Const(0)), Equal(Var("out"), Const(120)))
 )
 ;;
+
 (** 1.4.5 Validité d’un triplet de Hoare *)
+
+(* Question 10. *)
+let htvalid_test (ht : hoare_triple) (v : valuation) : bool =
+  let (pre, p, post) : t_prop * prog * t_prop = ht in
+  if pinterp pre v
+  then (
+    let valuation_res = exec p v in
+    pinterp post valuation_res
+  )
+  else false 
+;;
+
+Printf.printf "%B\n" (htvalid_test hoare_01 [("x", 2)]);;
+Printf.printf "%B\n" (htvalid_test hoare_01 [("x", 3)]);;
+Printf.printf "%B\n" (htvalid_test hoare_02 [("x", 2)]);;
+Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 0)]);;
+Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 1)]);;
+Printf.printf "%B\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
 
 
 (** 2. Un (mini) prouveur en logique de Hoare*)
@@ -682,10 +704,24 @@ let hoare_q9_03 = Hoare
 (** 2.1 Les buts de preuves et le langage des tactiques *)
 
 (** 2.1.1 Les buts de preuves *)
+(* Question 1. *)
+(* Question 2. *)
+(* Question 3. *)
+
 (** 2.1.2 La règle de déduction pour la boucle *)
+(* Question 4. *)
+(* Question 5. *)
+
 (** 2.1.3 Le langage des tactiques *)
+(* Question 6. *)
 
 (** 2.2 Les buts de preuves et le langage des tactiques *)
+(* Question 1. *)
+(* Question 2. *)
 
 (** 2.2.1 La logique des propositions *)
+(* Question 3. *)
+
 (** 2.2.2 La logique de Hoare *)
+(* Question 4. *)
+(* Question 5. *)
