@@ -37,7 +37,10 @@ let print_header_results (exercise : int) (section : int) (question : int) (resu
 (** Type énuméré [operator] : Addition, Soustraction et Multiplication. *)
 type operator = ADD | MINUS | MULT;;
 (** Type [aexp] : Donne la syntaxe abstraite des expressions arithmétiques. *)
-type aexp = Const of int | Var of string | Ope of aexp * aexp * operator;;
+type aexp = 
+  | Const of int 
+  | Var of string 
+  | Ope of aexp * aexp * operator;;
 
 (* Question 2. *)
 
@@ -696,7 +699,7 @@ Printf.printf "%B\n" (htvalid_test hoare_01 [("x", 3)]);;
 Printf.printf "%B\n" (htvalid_test hoare_02 [("x", 2)]);;
 Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 0)]);;
 Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 1)]);;
-Printf.printf "%B\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
+Printf.printf "%B\n\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
 
 
 (** 2. Un (mini) prouveur en logique de Hoare*)
@@ -704,12 +707,94 @@ Printf.printf "%B\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
 (** 2.1 Les buts de preuves et le langage des tactiques *)
 
 (** 2.1.1 Les buts de preuves *)
+
 (* Question 1. *)
+
+type context = (string * t_prop) list;;
+type conclusion =
+  | Hoare of hoare_triple
+  | Prop of t_prop
+;;
+
+type goal = context * conclusion;;
+
 (* Question 2. *)
+
+(* Fuchs a dit à Conctance de remplacer 
+   les P, Q et R par des t_prop, du style
+   P = true, Q = false, etc...
+   Cf 1.4.1 => Remarquez aussi que l’on 
+   n’a pas de variables propositionnelles.  *)
+
+let prop_P : t_prop = True;;
+let prop_Q : t_prop = False;;
+let prop_R : t_prop = True;;
+
+let goal_01 : goal = (
+  [("H", Impl(Or(prop_P, prop_Q), prop_R)); ("H2", prop_P)],
+  Prop(Or(prop_P, prop_Q))
+);;
+
+let goal_02 : goal = (
+  [],
+  Hoare(
+    Equal(Var("x"), Const(-3)),
+    Cond(
+      Le(Var("x"), Const(0)),
+      Aff("x", Ope(Const(0), Var("x"), MINUS)),
+      Aff("x", Var("x"))
+    ),
+    Equal(Var("x"), Const(3))
+  )
+);;
+
 (* Question 3. *)
 
+let print_goal (g : goal) : unit =
+  let (ct, cc) : context * conclusion = g in
+  List.iter (fun (v, p) -> Printf.printf "%s : %s\n" v (prop_to_string p)) ct;
+  Printf.printf "===================================\n";
+  match cc with
+  | Hoare(h) -> (
+    let (pre, prog, post) : t_prop * prog * t_prop = h in
+    Printf.printf "{ %s }\n" (prop_to_string pre);
+    Printf.printf "%s\n" (prog_to_string prog);
+    Printf.printf "{ %s }\n\n" (prop_to_string post);
+  )
+  | Prop(p) -> Printf.printf "%s\n\n" (prop_to_string p);
+;;
+
+print_goal goal_01;;
+print_goal goal_02;;
+
+let fresh_ident =
+  let prefix = "H" and count = ref 0
+  in
+  function () -> (count := !count + 1 ;
+    prefix ^ (string_of_int (!count)))
+;;
+
+let a = fresh_ident();;
+let b = fresh_ident();;
+
+Printf.printf "(%s, %s)\n\n" a b;;
+
 (** 2.1.2 La règle de déduction pour la boucle *)
+
 (* Question 4. *)
+
+(* 
+
+  Arbre de preuve ???
+
+  Est-ce qu'il veut un arbre comme ca :
+
+  https://fr.wikiversity.org/wiki/Logique_des_propositions/D%C3%A9finitions#/media/Fichier:Logique2.jpg
+
+  ????
+
+*)
+
 (* Question 5. *)
 
 (** 2.1.3 Le langage des tactiques *)
