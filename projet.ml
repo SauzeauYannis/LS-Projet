@@ -711,6 +711,7 @@ Printf.printf "%B\n\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
 (* Question 1. *)
 
 type context = (string * t_prop) list;;
+
 type conclusion =
   | Hoare of hoare_triple
   | Prop of t_prop
@@ -719,12 +720,6 @@ type conclusion =
 type goal = context * conclusion;;
 
 (* Question 2. *)
-
-(* Fuchs a dit à Conctance de remplacer 
-   les P, Q et R par des t_prop, du style
-   P = true, Q = false, etc...
-   Cf 1.4.1 => Remarquez aussi que l’on 
-   n’a pas de variables propositionnelles.  *)
 
 let prop_P : t_prop = True;;
 let prop_Q : t_prop = False;;
@@ -774,10 +769,10 @@ let fresh_ident =
     prefix ^ (string_of_int (!count)))
 ;;
 
-let a = fresh_ident();;
-let b = fresh_ident();;
+let h1 = fresh_ident();;
+let h2 = fresh_ident();;
 
-Printf.printf "(%s, %s)\n\n" a b;;
+Printf.printf "(%s, %s)\n\n" h1 h2;;
 
 (** 2.1.2 La règle de déduction pour la boucle *)
 
@@ -797,12 +792,154 @@ Printf.printf "(%s, %s)\n\n" a b;;
 
 (* Question 5. *)
 
+(* TODO *)
+
 (** 2.1.3 Le langage des tactiques *)
+
 (* Question 6. *)
 
-(** 2.2 Les buts de preuves et le langage des tactiques *)
+type tactic =
+  (* Partie logique des propositions *)
+  | And_Intro 
+  | Or_Intro_1
+  | Or_Intro_2
+  | Impl_Intro
+  | Not_Intro
+  | And_Elim_1 of string
+  | And_Elim_2 of string
+  | Or_Elim of string
+  | Impl_Elim of string * string
+  | Not_Elim of string * string
+  | Exact of string
+  | Assume of t_prop
+  (* 
+  | Admit of ??
+  *)
+  (* Partie logique de Hoare *)
+  | HSkip
+  | HAssign
+  | HIf
+  | HRepeat of string
+  | HCons of t_prop * t_prop
+  | HSeq of t_prop
+;;
+
+(** 2.2 Appliquer une tactique à un but *)
+
 (* Question 1. *)
+
+let rec bool2prop (be : bexp) : t_prop  =
+  match be with
+  | True -> True
+  | False -> False
+  | Not(b) -> Not(bool2prop(b))
+  | And(b1, b2) -> And(bool2prop(b1), bool2prop(b2))
+  | Or(b1, b2) -> Or(bool2prop(b1), bool2prop(b2))
+  | Equal(a1, a2) -> Equal(a1, a2)
+  | Le(a1, a2) -> Le(a1, a2)
+;;
+
+Printf.printf "%s\n" (prop_to_string(bool2prop(bexp_01)));;
+Printf.printf "%s\n" (prop_to_string(bool2prop(bexp_09)));;
+
 (* Question 2. *)
+
+let find_prop_context (name : string) (c : context) : t_prop = 
+  try 
+  (
+    let _, value = List.find (fun (x, _) -> String.equal name x) c in
+    value
+  )
+  with | _ -> failwith ("No such hypothesis: " ^ name)
+;;
+
+let (ct, cc) = goal_01;;
+find_prop_context ("H3") ct;;
+
+let apply_prop_tactic (t : tactic) (g : goal) : goal list =
+  let (ct, cc) : context * conclusion = g in
+  match t with
+  | And_Intro -> (
+    match cc with 
+    | Prop(And(p1, p2)) -> [(ct, Prop(p1)); (ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Goal is not an And-formula."
+  )
+  | Or_Intro_1 -> (
+    match cc with 
+    | Prop(Or(p1, p2)) -> [(ct, Prop(p1))]
+    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
+  )
+  | Or_Intro_2 -> (
+    match cc with 
+    | Prop(Or(p1, p2)) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
+  )
+  | Impl_Intro -> (
+    match cc with 
+    | Prop(Impl(p1, p2)) -> [((fresh_ident(), p1)::ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Goal is not an Impl-formula."
+  )
+  | Not_Intro -> (
+    match cc with 
+    | Prop(Not(p1)) -> [((fresh_ident(), p1)::ct, Prop(False))]
+    | _ -> failwith "Tactic failure: Goal is not an Not-formula."
+  )
+  | And_Elim_1(h) -> (
+    match (find_prop_context h ct) with 
+    | And(p1, p2) -> [((fresh_ident(), p1)::ct, cc)]
+    | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
+  )
+  | And_Elim_2(h) -> (
+    match (find_prop_context h ct) with 
+    | Or(p1, p2) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
+  )
+  | Or_Elim(h) -> (
+    match (find_prop_context h ct) with 
+    | Or(p1, p2) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Hypothesis is not an Or-formula."
+  )
+  | Impl_Elim(h1, h2) -> (
+    match (find_prop_context h1 ct) with 
+    | Or(p1, p2) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Hypothesis is not an Impl-formula."
+  )
+  | Not_Elim(h1, h2) -> (
+    match (find_prop_context h1 ct) with 
+    | Or(p1, p2) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Hypothesis is not an Not-formula."
+  )
+  | Exact(h) -> (
+    match (find_prop_context h ct) with 
+    | Or(p1, p2) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Hypothesis is not exact."
+  )
+  | Assume(p) -> (
+    match cc with 
+    | Prop(Or(p1, p2)) -> [(ct, Prop(p2))]
+    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
+  )
+  (* 
+  | Admit(??)
+  *)
+;;
+(* 
+let apply_hoare_tactic (t : tactic) (g : goal) : goal =
+  match g with
+  | HSkip
+  | HAssign
+  | HIf
+  | HRepeat(v)
+  | HCons(pre, post)
+  | HSeq(p)
+;;
+
+let apply_tactic (t : tactic) (g : goal) : goal =
+  let (_, c) : context * conclusion = g in
+  match c with
+  | Hoare(_) -> apply_hoare_tactic t g
+  | Prop(_) -> apply_prop_tactic t g
+;; *)
 
 (** 2.2.1 La logique des propositions *)
 (* Question 3. *)
