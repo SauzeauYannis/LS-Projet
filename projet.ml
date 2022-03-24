@@ -807,9 +807,7 @@ type tactic =
   | Not_Elim of string * string
   | Exact of string
   | Assume of t_prop
-  (* 
-  | Admit of ??
-*)
+  | Admit
   (* Partie logique de Hoare *)
   | HSkip
   | HAssign
@@ -912,17 +910,25 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
           then [] (*WIN*)
           else failwith "Tactic failure: Props are not the same."
       | _ -> failwith "Tactic failure: The conclusion is not a logical proposition."
-    
     )
   | Assume(p) -> (
       [((fresh_ident(), p)::ct, cc); (ct, Prop(p))]
     )
+  | Admit -> (
+    match cc with
+    | Prop(p) -> (
+      match p with
+      | Equal(_, _) | Le(_, _) | True -> []
+      | _ -> failwith "Tactic failure: We can admit this."
+    )
+    | _ -> failwith "Tactic failure: The conclusion is not a logical proposition."
+  ) 
   | HSkip -> (
     match cc with
-    | Hoare(pre, prog, pos) -> (
+    | Hoare(pre, prog, post) -> (
       match prog with
       | Skip -> (
-        if (pre = pos)
+        if (pre = post)
         then [] (*WIN*)
         else failwith "Precondiction is not right"
       )
@@ -932,29 +938,49 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
   )
   | HAssign -> (
     match cc with
-    | Hoare(pre, prog, pos) -> (
+    | Hoare(pre, prog, post) -> (
       match prog with
       | Aff(s, v) -> (
-        []
+        if (pre = psubst s v post)
+        then [] (*WIN*)
+        else failwith "Precondiction is not right"
       )
       | _ -> failwith "Goal is not an assignment"
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
-  (* 
-  | Admit(??)  
-| HAssign
+  | HSeq(p) -> (
+    match cc with
+    | Hoare(pre, prog, post) -> (
+      match prog with
+      | Seq(prog1, prog2) -> [(ct, Hoare(pre, prog1, p)); (ct, Hoare(p, prog2, post));]
+      | _ -> failwith "Goal is not an assignment"
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
+  | HCons(cons_pre, cons_post) -> (
+    match cc with
+    | Hoare(pre, prog, post) -> (
+      let answer = ref [] in
+      if cons_post <> post
+      then answer := ([], Prop(Impl(cons_post, post)))::!answer;
+      answer := ([], Hoare(cons_pre, prog, cons_post))::!answer;
+      if cons_pre <> pre
+      then answer := ([], Prop(Impl(cons_pre, pre)))::!answer;
+      !answer
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
+
+  (*
 | HIf
 | HRepeat(v)
-| HCons(pre, post)
-| HSeq(p)
   *)
   | _ -> failwith "Not supported yet.."
 ;;
 
 (** 2.2.1 La logique des propositions *)
 (* Question 3. *)
-
 
 (* Fonction recursive appliquant une liste de tactics. *)
 let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
@@ -1004,10 +1030,89 @@ apply_tactics [goal_q3]
   (Exact("H5"));
 ]
 ;;
+
 (** 2.2.2 La logique de Hoare *)
-
+Printf.printf "\n2.2.2 La logique de Hoare\n";;
 (* Question 4. *)
+Printf.printf "\nQuestion 4.\n";;
 
-let goal_q4_1 = apply_tactic HSkip ([], Hoare(hoare_01));;
+(* {x = 2} skip {x = 2} *)
+let goal_q4_1 = ([], Hoare(hoare_01));;
+apply_tactics [goal_q4_1] [HSkip];;
+
+(* {y + 1 < 4} y := y + 1 {y < 4} *)
+let goal_q4_2 =
+( [],
+  Hoare
+  (
+    (
+      Le(Ope(Var("y"), Const(1), ADD), Const(4)), 
+      Aff("y", Ope(Var("y"), Const(1), ADD)), 
+      Le(Var("y"), Const(4))
+    )
+  )
+);;
+apply_tactics [goal_q4_2] [HAssign];;
+
+(* {y = 5} x := y + 1 {x = 6} *)
+let goal_q4_3 = 
+( [],
+  Hoare
+  (
+    (
+      Equal(Var("y"), Const(5)), 
+      Aff("x", Ope(Var("y"), Const(1), ADD)), 
+      Equal(Var("x"), Const(6))
+    )
+  )
+);;
+
+apply_tactics [goal_q4_3] 
+[ 
+  HCons(Equal(Ope(Var("y"), Const(1), ADD), Const(6)), Equal(Var("x"), Const(6)));
+  Impl_Intro;
+  Admit; 
+  HAssign
+];;
+
+(* {True} z := x; z := z+y; u := z {u = x + y} *)
+let goal_q4_4 = 
+  ( [],
+    Hoare
+    (
+      (
+        True, 
+        Seq
+        (
+          Seq
+          (
+            Aff("z", Var("x")), 
+            Aff("z", Ope(Var("z"), Var("y"), ADD))
+          ),
+          Aff("u", Var("z"))
+        ),
+        Equal(Var("u"), Ope(Var("x"), Var("y"), ADD))
+      )
+    )
+  );;
+(**
+  Hoare_sequence_rule with (z = x + y).
+  Hoare_sequence_rule with (z + y = x + y).
+  Hoare_consequence_rule with (x + y = x + y) and (z + y = x + y).
+  Hoare_assignment_rule.
+  Hoare_assignment_rule.
+  Hoare_assignment_rule.
+*)
+apply_tactics [goal_q4_4] 
+[
+  HSeq(Equal(Var("z"), Ope(Var("x"), Var("y"), ADD)));
+  HSeq(Equal(Ope(Var("z"), Var("y"), ADD), Ope(Var("x"), Var("y"), ADD)));
+  HCons(Equal(Ope(Var("x"), Var("y"), ADD), Ope(Var("x"), Var("y"), ADD)), Equal(Ope(Var("z"), Var("y"), ADD), Ope(Var("x"), Var("y"), ADD)));
+  Impl_Intro;
+  Admit;
+  HAssign;
+  HAssign;
+  HAssign
+];;
 
 (* Question 5. *)
