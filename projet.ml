@@ -924,21 +924,32 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
   | Assume(p) -> (
       [((fresh_ident(), p)::ct, cc); (ct, Prop(p))]
     )
+  | HSkip -> (
+    match cc with
+    | Hoare(pre, prog, pos) -> (
+      match prog with
+      | Skip -> (
+        if (pre = pos)
+        then [] (*WIN*)
+        else failwith "Precondiction is not right"
+      )
+      | _ -> failwith "Goal is not a Skip-statement"
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
+  | HAssign -> (
+    match cc with
+    | Hoare(pre, prog, pos) -> (
+      match prog with
+      | Aff(s, v) -> (
+        []
+      )
+      | _ -> failwith "Goal is not an assignment"
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
   (* 
-  | Admit(??)
-  
-  | HSkip -> 
-    (
-      match cc with
-      | Hoare(pre,p,post) -> 
-        (
-          match p with
-          | Skip -> 
-| Sequence(Skip,next_p) ->
-)
-| _ -> failwith "Tactic failure: The conclusion is not a Hoare triple."
-)
-      
+  | Admit(??)  
 | HAssign
 | HIf
 | HRepeat(v)
@@ -1027,5 +1038,9 @@ print_goal goal_q3_4;;
 let goal_q3_4 = apply_tactic (Exact("H7")) goal_q3_4;; (*fini car liste vide*) 
                                                        
 (** 2.2.2 La logique de Hoare *)
+
 (* Question 4. *)
+
+let goal_q4_1 = apply_tactic HSkip ([], Hoare(hoare_01));;
+
 (* Question 5. *)
