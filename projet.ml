@@ -962,70 +962,41 @@ let goal_q3 : goal = (
     )
   )
 );;
+(*  *)
+let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
+  match goals with
+  | [] -> Printf.printf "No more goal. Qed.\n"
+  | curr_goal::tail_goals -> 
+    (
+      match tactics with
+      | [] -> Printf.printf "No more tactic. But there is still goals..\n"
+      | curr_tactic::tail_tactics -> 
+        print_goal curr_goal;
+        let new_goals = apply_tactic curr_tactic curr_goal in
+        if(new_goals = [])
+        then Printf.printf "Subgoal proved.\n";
+        apply_tactics (new_goals @ tail_goals) tail_tactics; 
+    )
+;;
 
-
-print_goal goal_q3;;
-
-(* Impl_Intro. *)
-let goal_q3 = List.hd (apply_tactic Impl_Intro goal_q3);;
-
-(* And_Intro. *)
-let goal_q3_list = apply_tactic And_Intro goal_q3;;
-let goal_q3_1 = List.nth goal_q3_list 0;; (* P -> R *)
-print_goal goal_q3_1;;
-let goal_q3_3 = List.nth goal_q3_list 1;; (* Q -> R *)
-print_goal goal_q3_3;;
-
-(* Impl_Intro. *)
-let goal_q3_1 = List.hd (apply_tactic Impl_Intro goal_q3_1);;
-print_goal goal_q3_1;;
-
-(* assume (P \/ Q). *)
-let goal_q3_list = apply_tactic (Assume(Or(prop_P, prop_Q))) goal_q3_1;;
-let goal_q3_1 = List.nth goal_q3_list 0;; (* R *)
-print_goal goal_q3_1;;
-let goal_q3_2 = List.nth goal_q3_list 1;; (* P \/ Q *)
-print_goal goal_q3_2;;
-
-(* Impl_Elim in H and H1. *)
-let goal_q3_1 = List.hd (apply_tactic (Impl_Elim("H3","H5")) goal_q3_1);;
-print_goal goal_q3_1;;
-
-(* exact H2. *)
-let goal_q3_1 = apply_tactic (Exact("H6")) goal_q3_1;; (* fini car liste vide *)
-                                                       
-(* Or_Intro_1. *)
-let goal_q3_2 = List.hd (apply_tactic (Or_Intro_1) goal_q3_2);;
-print_goal goal_q3_2;;
-  
-(* exact H0.                    *)
-let goal_q3_2 = apply_tactic (Exact("H4")) goal_q3_2;; (* fini car liste vide *)
-
-(* Impl_Intro.                  *) 
-let goal_q3_3 = List.hd (apply_tactic (Impl_Intro) goal_q3_3);;
-print_goal goal_q3_3;;
-
-(* assume (P \/ Q).          LA *)
-let goal_q3_list = apply_tactic (Assume(Or(prop_P, prop_Q))) goal_q3_3;;
-let goal_q3_3 = List.nth goal_q3_list 0;; (* R *)
-print_goal goal_q3_3;;
-let goal_q3_4 = List.nth goal_q3_list 1;; (* P \/ Q *)
-print_goal goal_q3_4;;
-
-(* Impl_Elim in H and H1.       *)
-let goal_q3_3 = List.hd (apply_tactic (Impl_Elim("H3","H8")) goal_q3_3);;
-print_goal goal_q3_3;;
-
-(* exact H2.                    *)
-let goal_q3_3 = apply_tactic (Exact("H9")) goal_q3_3;; (*fini car liste vide*)
-
-(* Or_Intro_2.                  *)  
-let goal_q3_4 = List.hd (apply_tactic (Or_Intro_2) goal_q3_4);;
-print_goal goal_q3_4;;
-
-(* exact H0.                    *)
-let goal_q3_4 = apply_tactic (Exact("H7")) goal_q3_4;; (*fini car liste vide*) 
-                                                       
+apply_tactics [goal_q3] 
+[
+  Impl_Intro;
+  And_Intro;
+  Impl_Intro;
+  (Assume(Or(prop_P, prop_Q)));
+  (Impl_Elim("H3","H5"));
+  (Exact("H6"));
+  Or_Intro_1;
+  (Exact("H4"));
+  Impl_Intro;
+  (Assume(Or(prop_P, prop_Q)));
+  (Impl_Elim("H3","H8"));
+  (Exact("H9"));
+  Or_Intro_2;
+  (Exact("H7"));
+]
+;;
 (** 2.2.2 La logique de Hoare *)
 (* Question 4. *)
 (* Question 5. *)
