@@ -64,26 +64,26 @@ let aexp_06 = Ope(Const(4), Var("y"), MULT);;
 
 (* (3 * x * x) *)
 let aexp_07 = Ope(
-              Ope(Const(3), Var("x"), MULT),
-              Var("x"),
-              MULT
-            )
+    Ope(Const(3), Var("x"), MULT),
+    Var("x"),
+    MULT
+  )
 ;;
 
 (* (5 * x + 7 * y) *)
 let aexp_08 = Ope(
-              Ope(Const(5), Var("x"), MULT),
-              Ope(Const(7), Var("y"), MULT),
-              ADD
-            )
+    Ope(Const(5), Var("x"), MULT),
+    Ope(Const(7), Var("y"), MULT),
+    ADD
+  )
 ;;
 
 (* (6 * x + 5 * y * x) *)
 let aexp_09 = Ope(
-              Ope(Const(6), Var("x"), MULT),
-              Ope(Const(5),Ope( Var("y"), Var("x"), MULT), MULT),
-              ADD
-            )
+    Ope(Const(6), Var("x"), MULT),
+    Ope(Const(5),Ope( Var("y"), Var("x"), MULT), MULT),
+    ADD
+  )
 ;;
 
 
@@ -102,21 +102,21 @@ let rec aexp_to_string (exp : aexp) : string =
   | Const(elem) -> string_of_int elem
   | Var(elem) -> elem
   | Ope(l, r, o) -> 
-    "(" ^ (aexp_to_string l) ^ (operator_to_string o) ^ (aexp_to_string r) ^ ")"
+      "(" ^ (aexp_to_string l) ^ (operator_to_string o) ^ (aexp_to_string r) ^ ")"
 ;;
 
 (* 3.2 *)
 print_header_results 1 1 3 [
-    (aexp_01, "2");
-    (aexp_02, "(2 + 3)");
-    (aexp_03, "(2 - 5)");
-    (aexp_04, "(3 * 6)");
-    (aexp_05, "(2 + x)");
-    (aexp_06, "(4 * y)");
-    (aexp_07, "((3 * x) * x)");
-    (aexp_08, "((5 * x) + (7 * y))");
-    (aexp_09, "((6 * x) + (5 * (y * x)))");
-  ] (aexp_to_string)
+  (aexp_01, "2");
+  (aexp_02, "(2 + 3)");
+  (aexp_03, "(2 - 5)");
+  (aexp_04, "(3 * 6)");
+  (aexp_05, "(2 + x)");
+  (aexp_06, "(4 * y)");
+  (aexp_07, "((3 * x) * x)");
+  (aexp_08, "((5 * x) + (7 * y))");
+  (aexp_09, "((6 * x) + (5 * (y * x)))");
+] (aexp_to_string)
 ;;
 
 
@@ -132,12 +132,12 @@ let compute (e : aexp) : int =
   match e with
   | Const(elem) -> elem
   | Ope(Const(l), Const(r), o) ->
-  (
-    match o with
-    | ADD -> l + r
-    | MINUS -> l - r
-    | MULT -> l * r
-  )
+      (
+        match o with
+        | ADD -> l + r
+        | MINUS -> l - r
+        | MULT -> l * r
+      )
   | _ -> failwith "Error [compute aexp] : Cannot compute this expression !"
 ;;
 
@@ -151,9 +151,9 @@ let rec ainterp (e : aexp) (v : valuation) : int =
   | Const(elem) -> elem
   | Var(elem) -> (var_to_const elem v)
   | Ope(l, r, o) -> 
-    let l_i : aexp = Const(ainterp l v)
-    and r_i : aexp = Const(ainterp r v) in
-    compute(Ope(l_i, r_i, o))
+      let l_i : aexp = Const(ainterp l v)
+      and r_i : aexp = Const(ainterp r v) in
+      compute(Ope(l_i, r_i, o))
 ;;
 
 (** Question 6. *)
@@ -161,16 +161,16 @@ let rec ainterp (e : aexp) (v : valuation) : int =
 let aexp_valuation : valuation = [("x", 5); ("y", 9)];;
 
 print_header_results 1 1 6 [
-    ((ainterp aexp_01 aexp_valuation), "2");
-    ((ainterp aexp_02 aexp_valuation), "5");
-    ((ainterp aexp_03 aexp_valuation), "-3");
-    ((ainterp aexp_04 aexp_valuation), "18");
-    ((ainterp aexp_05 aexp_valuation), "7");
-    ((ainterp aexp_06 aexp_valuation), "36");
-    ((ainterp aexp_07 aexp_valuation), "75");
-    ((ainterp aexp_08 aexp_valuation), "88");
-    ((ainterp aexp_09 aexp_valuation), "255");
-  ] (Int.to_string)
+  ((ainterp aexp_01 aexp_valuation), "2");
+  ((ainterp aexp_02 aexp_valuation), "5");
+  ((ainterp aexp_03 aexp_valuation), "-3");
+  ((ainterp aexp_04 aexp_valuation), "18");
+  ((ainterp aexp_05 aexp_valuation), "7");
+  ((ainterp aexp_06 aexp_valuation), "36");
+  ((ainterp aexp_07 aexp_valuation), "75");
+  ((ainterp aexp_08 aexp_valuation), "88");
+  ((ainterp aexp_09 aexp_valuation), "255");
+] (Int.to_string)
 ;;
 
 
@@ -187,8 +187,8 @@ let rec asubst (var : string) (subst : aexp) (e : aexp) : aexp =
 
 let asubst_list (subs : (string * aexp) list) (e : aexp) : aexp =
   let res : aexp ref = ref e in
-    List.iter (fun (s, e) -> res := (asubst s e !res)) subs;
-    !res
+  List.iter (fun (s, e) -> res := (asubst s e !res)) subs;
+  !res
 ;;
 
 (** Question 8. *)
@@ -199,16 +199,16 @@ let y_subst : aexp = Ope(Var("z"), Const(2), ADD);;
 let subs = asubst_list ([("x", x_subst); ("y", y_subst)]);;
 
 print_header_results 1 1 8 [
-    ((subs aexp_01), "2");
-    ((subs aexp_02), "(2 + 3)");
-    ((subs aexp_03), "(2 - 5)");
-    ((subs aexp_04), "(3 * 6)");
-    ((subs aexp_05), "(2 + 7)");
-    ((subs aexp_06), "(4 * (z + 2))");
-    ((subs aexp_07), "((3 * 7) * 7)");
-    ((subs aexp_08), "((5 * 7) + (7 * (z + 2)))");
-    ((subs aexp_09), "((6 * 7) + (5 * ((z + 2) * 7)))");
-  ] (aexp_to_string)
+  ((subs aexp_01), "2");
+  ((subs aexp_02), "(2 + 3)");
+  ((subs aexp_03), "(2 - 5)");
+  ((subs aexp_04), "(3 * 6)");
+  ((subs aexp_05), "(2 + 7)");
+  ((subs aexp_06), "(4 * (z + 2))");
+  ((subs aexp_07), "((3 * 7) * 7)");
+  ((subs aexp_08), "((5 * 7) + (7 * (z + 2)))");
+  ((subs aexp_09), "((6 * 7) + (5 * ((z + 2) * 7)))");
+] (aexp_to_string)
 ;;
 
 
@@ -245,21 +245,21 @@ let bexp_05 : bexp = Equal(Const(2), Const(4));;
 
 (* (3 + 5 = 2 * 4) *)
 let bexp_06 : bexp = Equal(
-  Ope(Const(3), Const(5), ADD), 
-  Ope(Const(2), Const(4), MULT));;
+    Ope(Const(3), Const(5), ADD), 
+    Ope(Const(2), Const(4), MULT));;
 
 (* (2 * x = y + 1) *)
 let bexp_07 : bexp = Equal(
-  Ope(Const(2), Var("x"), MULT), 
-  Ope(Var("y"), Const(1), ADD));;
+    Ope(Const(2), Var("x"), MULT), 
+    Ope(Var("y"), Const(1), ADD));;
 
 (* (5 <= 7) *)
 let bexp_08 : bexp = Le(Const(5), Const(7));;
 
 (* (8 + 9 <= 4 * 5) et (3 + x <= 4 * y) *)
 let bexp_09 : bexp = And(
-  Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)),
-  Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4), Var("y"), MULT))
+    Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)),
+    Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4), Var("y"), MULT))
   );;
 
 (** Question 3. *)
@@ -278,16 +278,16 @@ let rec bexp_to_string (b : bexp) : string =
 
 (* 3.2 *)
 print_header_results 1 2 3 [
-    (bexp_01, "vrai");
-    (bexp_02, "(vrai et faux)");
-    (bexp_03, "non (vrai)");
-    (bexp_04, "(vrai ou faux)");
-    (bexp_05, "(2 = 4)");
-    (bexp_06, "((3 + 5) = (2 * 4))");
-    (bexp_07, "((2 * x) = (y + 1))");
-    (bexp_08, "(5 <= 7)");
-    (bexp_09, "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))");
-  ] (bexp_to_string)
+  (bexp_01, "vrai");
+  (bexp_02, "(vrai et faux)");
+  (bexp_03, "non (vrai)");
+  (bexp_04, "(vrai ou faux)");
+  (bexp_05, "(2 = 4)");
+  (bexp_06, "((3 + 5) = (2 * 4))");
+  (bexp_07, "((2 * x) = (y + 1))");
+  (bexp_08, "(5 <= 7)");
+  (bexp_09, "(((8 + 9) <= (4 * 5)) et ((3 + x) <= (4 * y)))");
+] (bexp_to_string)
 ;;
 
 
@@ -310,16 +310,16 @@ let rec binterp (b : bexp) (v : valuation) : bool =
 let bexp_valuation : valuation = [("x", 7); ("y", 3)];;
 
 print_header_results 1 2 5 [
-    ((binterp bexp_01 bexp_valuation), "true");
-    ((binterp bexp_02 bexp_valuation), "false");
-    ((binterp bexp_03 bexp_valuation), "false");
-    ((binterp bexp_04 bexp_valuation), "true");
-    ((binterp bexp_05 bexp_valuation), "false");
-    ((binterp bexp_06 bexp_valuation), "true");
-    ((binterp bexp_07 bexp_valuation), "false");
-    ((binterp bexp_08 bexp_valuation), "true");
-    ((binterp bexp_09 bexp_valuation), "true");
-  ] (Bool.to_string)
+  ((binterp bexp_01 bexp_valuation), "true");
+  ((binterp bexp_02 bexp_valuation), "false");
+  ((binterp bexp_03 bexp_valuation), "false");
+  ((binterp bexp_04 bexp_valuation), "true");
+  ((binterp bexp_05 bexp_valuation), "false");
+  ((binterp bexp_06 bexp_valuation), "true");
+  ((binterp bexp_07 bexp_valuation), "false");
+  ((binterp bexp_08 bexp_valuation), "true");
+  ((binterp bexp_09 bexp_valuation), "true");
+] (Bool.to_string)
 ;;
 
 
@@ -343,31 +343,31 @@ let prog_01 = Aff("y", Const(7));;
 
 (* (z := 3 + 4 ; x := 2 * x) *)
 let prog_02 = Seq
-(
-  Aff("z", Ope(Const(3), Const(4), ADD)),
-  Aff("x", Ope(Const(2), Var("x"), MULT))
-)
+    (
+      Aff("z", Ope(Const(3), Const(4), ADD)),
+      Aff("x", Ope(Const(2), Var("x"), MULT))
+    )
 ;;
 
 (* (n := 3; if (n <= 4) then n:= 2 * n + 3 else n := n + 1) *)
 let prog_03 = Seq
-(
-  Aff("n", Const(3)),
-  Cond
-  (
-    Le(Var("n"), Const(4)), 
-    Aff("n", Ope(Ope(Const(2), Var("n"), MULT), Const(3), ADD)), 
-    Aff("n", Ope(Var("n"), Const(1), ADD))
-  )
-)
+    (
+      Aff("n", Const(3)),
+      Cond
+        (
+          Le(Var("n"), Const(4)), 
+          Aff("n", Ope(Ope(Const(2), Var("n"), MULT), Const(3), ADD)), 
+          Aff("n", Ope(Var("n"), Const(1), ADD))
+        )
+    )
 ;;
 
 (* (repeat 10 do x := x+1 od) *)
 let prog_04 = Loop
-(
-  Const(10), 
-  Aff("x", Ope(Var("x"), Const(1), ADD))
-)
+    (
+      Const(10), 
+      Aff("x", Ope(Var("x"), Const(1), ADD))
+    )
 ;;
 
 (** Question 3. *)
@@ -382,11 +382,11 @@ let rec prog_to_string (program: prog) : string =
 ;;
 
 print_header_results 1 3 3 [
-    (prog_01, "y := 7");
-    (prog_02, "z := (3 + 4);\nx := (2 * x)");
-    (prog_03, "n := 3;\nif ((n <= 4))\nthen n := ((2 * n) + 3)\nelse n := (n + 1)");
-    (prog_04, "repeat 10 do\nx := (x + 1)\nod");
-  ] (prog_to_string)
+  (prog_01, "y := 7");
+  (prog_02, "z := (3 + 4);\nx := (2 * x)");
+  (prog_03, "n := 3;\nif ((n <= 4))\nthen n := ((2 * n) + 3)\nelse n := (n + 1)");
+  (prog_04, "repeat 10 do\nx := (x + 1)\nod");
+] (prog_to_string)
 ;;
 
 (** 1.3.2 Interprétation *)
@@ -418,20 +418,20 @@ let rec exec (p : prog) (v : valuation) : valuation =
 
 let prog_fact : prog = 
   Seq
-  ( 
-    Aff("i", Const(1)),
-    Loop(
-      Var("in"), 
-      Seq
-      (
-        Aff("out", Ope(Var("out"), Var("i"), MULT)),
-        Seq(
-          Aff("i", Ope(Var("i"), Const(1), ADD)),
-          Aff("in", Ope(Var("in"), Const(1), MINUS))
-        )
+    ( 
+      Aff("i", Const(1)),
+      Loop(
+        Var("in"), 
+        Seq
+          (
+            Aff("out", Ope(Var("out"), Var("i"), MULT)),
+            Seq(
+              Aff("i", Ope(Var("i"), Const(1), ADD)),
+              Aff("in", Ope(Var("in"), Const(1), MINUS))
+            )
+          )
       )
     )
-  )
 ;;
 
 let fact (n : int) : int =
@@ -443,34 +443,34 @@ Printf.printf "Factorielle de 5 = %d\n\n" (fact 5);;
 
 let prog_fibo : prog =
   Seq
-  ( 
-    Aff("b", Const(1)),
-    Seq (
-      Aff("t", Const(0)),
-      Loop(
-        Var("in"), 
-        Seq
-        (
-          Aff("t", Var("out")),
+    ( 
+      Aff("b", Const(1)),
+      Seq (
+        Aff("t", Const(0)),
+        Loop(
+          Var("in"), 
           Seq
-          (
-            Aff("out", Var("b")),
-            Seq(
-              Aff("b", Ope(Var("t"), Var("b"), ADD)),
-              Aff("in", Ope(Var("in"), Const(1), MINUS))
+            (
+              Aff("t", Var("out")),
+              Seq
+                (
+                  Aff("out", Var("b")),
+                  Seq(
+                    Aff("b", Ope(Var("t"), Var("b"), ADD)),
+                    Aff("in", Ope(Var("in"), Const(1), MINUS))
+                  )
+                )
             )
-          )
-        )
-      ) 
+        ) 
+      )
     )
-  )
 ;;
 
 let fibo (n : int) : int =
   if n <= 0 then 0
   else if n = 1 then 1
   else
-  let v : valuation = exec prog_fibo [("in", n); ("out", 0)] in
+    let v : valuation = exec prog_fibo [("in", n); ("out", 0)] in
     var_to_const ("out") v
 ;;
 
@@ -522,15 +522,15 @@ let prop_09 : t_prop = Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4) , Var("y"),
 
 (* (5 <= 7) et (8 + 9 <= 4 * 5) *)
 let prop_10 : t_prop = And(
-  Le(Const(5), Const(7)),
-  Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)
-  ));;
+    Le(Const(5), Const(7)),
+    Le(Ope(Const(8), Const(9), ADD), Ope(Const(4), Const(5), MULT)
+      ));;
 
 (* (x = 1) implique (y <= 0) *)
 let prop_11 : t_prop = Impl(
-  Equal(Var("x"), Const(1)),
-  Le(Var("y"), Const(0))
-);;
+    Equal(Var("x"), Const(1)),
+    Le(Var("y"), Const(0))
+  );;
 
 (** Question 3. *)
 
@@ -581,18 +581,18 @@ let rec pinterp (prop : t_prop) (v : valuation) : bool =
 let t_prop_valuation : valuation = [("x", 7); ("y", 3)];;
 
 print_header_results 1 4 5 [
-    ((pinterp prop_01 t_prop_valuation), "true");
-    ((pinterp prop_02 t_prop_valuation), "false");
-    ((pinterp prop_03 t_prop_valuation), "false");
-    ((pinterp prop_04 t_prop_valuation), "true");
-    ((pinterp prop_05 t_prop_valuation), "true");
-    ((pinterp prop_06 t_prop_valuation), "false");
-    ((pinterp prop_07 t_prop_valuation), "true");
-    ((pinterp prop_08 t_prop_valuation), "false");
-    ((pinterp prop_09 t_prop_valuation), "true");
-    ((pinterp prop_10 t_prop_valuation), "true");
-    ((pinterp prop_11 t_prop_valuation), "true");
-  ] (Bool.to_string)
+  ((pinterp prop_01 t_prop_valuation), "true");
+  ((pinterp prop_02 t_prop_valuation), "false");
+  ((pinterp prop_03 t_prop_valuation), "false");
+  ((pinterp prop_04 t_prop_valuation), "true");
+  ((pinterp prop_05 t_prop_valuation), "true");
+  ((pinterp prop_06 t_prop_valuation), "false");
+  ((pinterp prop_07 t_prop_valuation), "true");
+  ((pinterp prop_08 t_prop_valuation), "false");
+  ((pinterp prop_09 t_prop_valuation), "true");
+  ((pinterp prop_10 t_prop_valuation), "true");
+  ((pinterp prop_11 t_prop_valuation), "true");
+] (Bool.to_string)
 ;;
 
 (** 1.4.3 Substitutions *)
@@ -611,8 +611,8 @@ let rec psubst (var : string) (subst : aexp) (p : t_prop) : t_prop =
 
 let psubst_list (subs : (string * aexp) list) (p : t_prop) : t_prop =
   let res : t_prop ref = ref p in
-    List.iter (fun (s, e) -> res := (psubst s e !res)) subs;
-    !res
+  List.iter (fun (s, e) -> res := (psubst s e !res)) subs;
+  !res
 ;;
 
 (* Question 7. *)
@@ -623,18 +623,18 @@ let y_subst : aexp = Ope(Var("k"), Const(2), ADD);;
 let subs = psubst_list ([("x", x_subst); ("y", y_subst)]);;
 
 print_header_results 1 4 7 [
-    ((subs prop_01), "vrai");
-    ((subs prop_02), "(vrai et faux)");
-    ((subs prop_03), "non (vrai)");
-    ((subs prop_04), "(vrai ou faux)");
-    ((subs prop_05), "(faux implique (vrai ou faux))");
-    ((subs prop_06), "(2 = 4)");
-    ((subs prop_07), "((3 + 5) = (2 * 4))");
-    ((subs prop_08), "((2 * (3 * (k + 2))) = ((k + 2) + 1))");
-    ((subs prop_09), "((3 + (3 * (k + 2))) <= (4 * (k + 2)))");
-    ((subs prop_10), "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
-    ((subs prop_11), "(((3 * (k + 2)) = 1) implique ((k + 2) <= 0))");
-  ] (prop_to_string)
+  ((subs prop_01), "vrai");
+  ((subs prop_02), "(vrai et faux)");
+  ((subs prop_03), "non (vrai)");
+  ((subs prop_04), "(vrai ou faux)");
+  ((subs prop_05), "(faux implique (vrai ou faux))");
+  ((subs prop_06), "(2 = 4)");
+  ((subs prop_07), "((3 + 5) = (2 * 4))");
+  ((subs prop_08), "((2 * (3 * (k + 2))) = ((k + 2) + 1))");
+  ((subs prop_09), "((3 + (3 * (k + 2))) <= (4 * (k + 2)))");
+  ((subs prop_10), "((5 <= 7) et ((8 + 9) <= (4 * 5)))");
+  ((subs prop_11), "(((3 * (k + 2)) = 1) implique ((k + 2) <= 0))");
+] (prop_to_string)
 ;;
 
 (** 1.4.4 Les triplets de Hoare *)
@@ -660,25 +660,25 @@ let hoare_02 = (
 
 (* {True} if x <= 0 then r := 0-x else r := x {0 <= r} *)
 let hoare_03 =
-(
-  True,
-  Cond
   (
-    Le(Var("x"), Const(0)),
-    Aff("r", Ope(Const(0),Var("x"),MINUS)),
-    Aff("r", Var("x"))
-  ),
-  Le(Const(0), Var("r"))
-) 
+    True,
+    Cond
+      (
+        Le(Var("x"), Const(0)),
+        Aff("r", Ope(Const(0),Var("x"),MINUS)),
+        Aff("r", Var("x"))
+      ),
+    Le(Const(0), Var("r"))
+  ) 
 ;;
 
 (* {in = 5 et out = 1} fact {in = 0 et out = 120} *)
 let hoare_04 = 
-(
-  And(Equal(Var("in"), Const(5)), Equal(Var("out"), Const(1))),
-  prog_fact,
-  And(Equal(Var("in"), Const(0)), Equal(Var("out"), Const(120)))
-)
+  (
+    And(Equal(Var("in"), Const(5)), Equal(Var("out"), Const(1))),
+    prog_fact,
+    And(Equal(Var("in"), Const(0)), Equal(Var("out"), Const(120)))
+  )
 ;;
 
 (** 1.4.5 Validité d’un triplet de Hoare *)
@@ -751,11 +751,11 @@ let print_goal (g : goal) : unit =
   Printf.printf "===================================\n";
   match cc with
   | Hoare(h) -> (
-    let (pre, prog, post) : t_prop * prog * t_prop = h in
-    Printf.printf "{ %s }\n" (prop_to_string pre);
-    Printf.printf "%s\n" (prog_to_string prog);
-    Printf.printf "{ %s }\n\n" (prop_to_string post);
-  )
+      let (pre, prog, post) : t_prop * prog * t_prop = h in
+      Printf.printf "{ %s }\n" (prop_to_string pre);
+      Printf.printf "%s\n" (prog_to_string prog);
+      Printf.printf "{ %s }\n\n" (prop_to_string post);
+    )
   | Prop(p) -> Printf.printf "%s\n\n" (prop_to_string p);
 ;;
 
@@ -766,7 +766,7 @@ let fresh_ident =
   let prefix = "H" and count = ref 0
   in
   function () -> (count := !count + 1 ;
-    prefix ^ (string_of_int (!count)))
+                  prefix ^ (string_of_int (!count)))
 ;;
 
 let h1 = fresh_ident();;
@@ -784,9 +784,9 @@ Printf.printf "(%s, %s)\n\n" h1 h2;;
 
   Est-ce qu'il veut un arbre comme ca :
 
-  https://fr.wikiversity.org/wiki/Logique_des_propositions/D%C3%A9finitions#/media/Fichier:Logique2.jpg
+https://fr.wikiversity.org/wiki/Logique_des_propositions/D%C3%A9finitions#/media/Fichier:Logique2.jpg
 
-  ????
+    ????
 
 *)
 
@@ -814,7 +814,7 @@ type tactic =
   | Assume of t_prop
   (* 
   | Admit of ??
-  *)
+*)
   (* Partie logique de Hoare *)
   | HSkip
   | HAssign
@@ -846,104 +846,186 @@ Printf.printf "%s\n" (prop_to_string(bool2prop(bexp_09)));;
 
 let find_prop_context (name : string) (c : context) : t_prop = 
   try 
-  (
-    let _, value = List.find (fun (x, _) -> String.equal name x) c in
-    value
-  )
+    (
+      let _, value = List.find (fun (x, _) -> String.equal name x) c in
+      value
+    )
   with | _ -> failwith ("No such hypothesis: " ^ name)
 ;;
 
-let (ct, cc) = goal_01;;
-find_prop_context ("H3") ct;;
-
-let apply_prop_tactic (t : tactic) (g : goal) : goal list =
+let apply_tactic (t : tactic) (g : goal) : goal list =
   let (ct, cc) : context * conclusion = g in
   match t with
   | And_Intro -> (
-    match cc with 
-    | Prop(And(p1, p2)) -> [(ct, Prop(p1)); (ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Goal is not an And-formula."
-  )
+      match cc with 
+      | Prop(And(p1, p2)) -> [(ct, Prop(p1)); (ct, Prop(p2))]
+      | _ -> failwith "Tactic failure: Goal is not an And-formula."
+    )
   | Or_Intro_1 -> (
-    match cc with 
-    | Prop(Or(p1, p2)) -> [(ct, Prop(p1))]
-    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
-  )
+      match cc with 
+      | Prop(Or(p1, p2)) -> [(ct, Prop(p1))]
+      | _ -> failwith "Tactic failure: Goal is not an Or-formula."
+    )
   | Or_Intro_2 -> (
-    match cc with 
-    | Prop(Or(p1, p2)) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
-  )
+      match cc with 
+      | Prop(Or(p1, p2)) -> [(ct, Prop(p2))]
+      | _ -> failwith "Tactic failure: Goal is not an Or-formula."
+    )
   | Impl_Intro -> (
-    match cc with 
-    | Prop(Impl(p1, p2)) -> [((fresh_ident(), p1)::ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Goal is not an Impl-formula."
-  )
+      match cc with 
+      | Prop(Impl(p1, p2)) -> [((fresh_ident(), p1)::ct, Prop(p2))]
+      | _ -> failwith "Tactic failure: Goal is not an Impl-formula."
+    )
   | Not_Intro -> (
-    match cc with 
-    | Prop(Not(p1)) -> [((fresh_ident(), p1)::ct, Prop(False))]
-    | _ -> failwith "Tactic failure: Goal is not an Not-formula."
-  )
+      match cc with 
+      | Prop(Not(p1)) -> [((fresh_ident(), p1)::ct, Prop(False))]
+      | _ -> failwith "Tactic failure: Goal is not an Not-formula."
+    )
   | And_Elim_1(h) -> (
-    match (find_prop_context h ct) with 
-    | And(p1, p2) -> [((fresh_ident(), p1)::ct, cc)]
-    | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
-  )
+      match (find_prop_context h ct) with 
+      | And(p1, p2) -> [((fresh_ident(), p1)::ct, cc)]
+      | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
+    )
   | And_Elim_2(h) -> (
-    match (find_prop_context h ct) with 
-    | Or(p1, p2) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
-  )
+      match (find_prop_context h ct) with 
+      | And(p1, p2) -> [((fresh_ident(), p2)::ct, cc)]
+      | _ -> failwith "Tactic failure: Hypothesis is not an And-formula."
+    )
   | Or_Elim(h) -> (
-    match (find_prop_context h ct) with 
-    | Or(p1, p2) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Hypothesis is not an Or-formula."
-  )
+      match (find_prop_context h ct) with 
+      | Or(p1, p2) -> [((fresh_ident(), p1)::ct, cc); ((fresh_ident(), p2)::ct, cc)]
+      | _ -> failwith "Tactic failure: Hypothesis is not an Or-formula."
+    )
   | Impl_Elim(h1, h2) -> (
-    match (find_prop_context h1 ct) with 
-    | Or(p1, p2) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Hypothesis is not an Impl-formula."
-  )
+      match (find_prop_context h1 ct) with 
+      | Impl(h1_1, h1_2) -> 
+          if h1_1 = (find_prop_context h2 ct) 
+          then [((fresh_ident(), h1_2)::ct, cc)]
+          else failwith "Tactic failure: Second hypothesis does not match the assumption of the first hypothesis."
+      | _ -> failwith "Tactic failure: Hypothesis is not an Impl-formula."
+    )
   | Not_Elim(h1, h2) -> (
-    match (find_prop_context h1 ct) with 
-    | Or(p1, p2) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Hypothesis is not an Not-formula."
-  )
+      match (find_prop_context h1 ct) with 
+      | Not(h1_1) -> 
+          if h1_1 = (find_prop_context h2 ct) 
+          then [((fresh_ident(), False)::ct, cc)]
+          else failwith "Tactic failure: Second hypothesis does not match the body of the first hypothesis."
+      | _ -> failwith "Tactic failure: Hypothesis is not an Not-formula."
+    )
   | Exact(h) -> (
-    match (find_prop_context h ct) with 
-    | Or(p1, p2) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Hypothesis is not exact."
-  )
+      match cc with
+      | Prop(p) -> 
+          if (find_prop_context h ct) = p
+          then [] (*WIN*)
+          else failwith "Tactic failure: Props are not the same."
+      | _ -> failwith "Tactic failure: The conclusion is not a logical proposition."
+    
+    )
   | Assume(p) -> (
-    match cc with 
-    | Prop(Or(p1, p2)) -> [(ct, Prop(p2))]
-    | _ -> failwith "Tactic failure: Goal is not an Or-formula."
-  )
+      [((fresh_ident(), p)::ct, cc); (ct, Prop(p))]
+    )
   (* 
   | Admit(??)
+  
+  | HSkip -> 
+    (
+      match cc with
+      | Hoare(pre,p,post) -> 
+        (
+          match p with
+          | Skip -> 
+| Sequence(Skip,next_p) ->
+)
+| _ -> failwith "Tactic failure: The conclusion is not a Hoare triple."
+)
+      
+| HAssign
+| HIf
+| HRepeat(v)
+| HCons(pre, post)
+| HSeq(p)
   *)
+  | _ -> failwith "Not supported yet.."
 ;;
-(* 
-let apply_hoare_tactic (t : tactic) (g : goal) : goal =
-  match g with
-  | HSkip
-  | HAssign
-  | HIf
-  | HRepeat(v)
-  | HCons(pre, post)
-  | HSeq(p)
-;;
-
-let apply_tactic (t : tactic) (g : goal) : goal =
-  let (_, c) : context * conclusion = g in
-  match c with
-  | Hoare(_) -> apply_hoare_tactic t g
-  | Prop(_) -> apply_prop_tactic t g
-;; *)
 
 (** 2.2.1 La logique des propositions *)
 (* Question 3. *)
 
+(* (P V Q => R) => (P => R) ^ (Q => R) *)
+let goal_q3 : goal = (
+  [],
+  Prop(
+    Impl(
+      Impl(Or(prop_P, prop_Q), prop_R), 
+      And(Impl(prop_P, prop_R), 
+          Impl(prop_Q, prop_R))
+    )
+  )
+);;
+
+
+print_goal goal_q3;;
+
+(* Impl_Intro. *)
+let goal_q3 = List.hd (apply_tactic Impl_Intro goal_q3);;
+
+(* And_Intro. *)
+let goal_q3_list = apply_tactic And_Intro goal_q3;;
+let goal_q3_1 = List.nth goal_q3_list 0;; (* P -> R *)
+print_goal goal_q3_1;;
+let goal_q3_3 = List.nth goal_q3_list 1;; (* Q -> R *)
+print_goal goal_q3_3;;
+
+(* Impl_Intro. *)
+let goal_q3_1 = List.hd (apply_tactic Impl_Intro goal_q3_1);;
+print_goal goal_q3_1;;
+
+(* assume (P \/ Q). *)
+let goal_q3_list = apply_tactic (Assume(Or(prop_P, prop_Q))) goal_q3_1;;
+let goal_q3_1 = List.nth goal_q3_list 0;; (* R *)
+print_goal goal_q3_1;;
+let goal_q3_2 = List.nth goal_q3_list 1;; (* P \/ Q *)
+print_goal goal_q3_2;;
+
+(* Impl_Elim in H and H1. *)
+let goal_q3_1 = List.hd (apply_tactic (Impl_Elim("H3","H5")) goal_q3_1);;
+print_goal goal_q3_1;;
+
+(* exact H2. *)
+let goal_q3_1 = apply_tactic (Exact("H6")) goal_q3_1;; (* fini car liste vide *)
+                                                       
+(* Or_Intro_1. *)
+let goal_q3_2 = List.hd (apply_tactic (Or_Intro_1) goal_q3_2);;
+print_goal goal_q3_2;;
+  
+(* exact H0.                    *)
+let goal_q3_2 = apply_tactic (Exact("H4")) goal_q3_2;; (* fini car liste vide *)
+
+(* Impl_Intro.                  *) 
+let goal_q3_3 = List.hd (apply_tactic (Impl_Intro) goal_q3_3);;
+print_goal goal_q3_3;;
+
+(* assume (P \/ Q).          LA *)
+let goal_q3_list = apply_tactic (Assume(Or(prop_P, prop_Q))) goal_q3_3;;
+let goal_q3_3 = List.nth goal_q3_list 0;; (* R *)
+print_goal goal_q3_3;;
+let goal_q3_4 = List.nth goal_q3_list 1;; (* P \/ Q *)
+print_goal goal_q3_4;;
+
+(* Impl_Elim in H and H1.       *)
+let goal_q3_3 = List.hd (apply_tactic (Impl_Elim("H3","H8")) goal_q3_3);;
+print_goal goal_q3_3;;
+
+(* exact H2.                    *)
+let goal_q3_3 = apply_tactic (Exact("H9")) goal_q3_3;; (*fini car liste vide*)
+
+(* Or_Intro_2.                  *)  
+let goal_q3_4 = List.hd (apply_tactic (Or_Intro_2) goal_q3_4);;
+print_goal goal_q3_4;;
+
+(* exact H0.                    *)
+let goal_q3_4 = apply_tactic (Exact("H7")) goal_q3_4;; (*fini car liste vide*) 
+                                                       
 (** 2.2.2 La logique de Hoare *)
 (* Question 4. *)
 (* Question 5. *)
