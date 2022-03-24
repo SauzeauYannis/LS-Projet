@@ -769,11 +769,6 @@ let fresh_ident =
                   prefix ^ (string_of_int (!count)))
 ;;
 
-let h1 = fresh_ident();;
-let h2 = fresh_ident();;
-
-Printf.printf "(%s, %s)\n\n" h1 h2;;
-
 (** 2.1.2 La règle de déduction pour la boucle *)
 
 (* Question 4. *)
@@ -839,11 +834,9 @@ let rec bool2prop (be : bexp) : t_prop  =
   | Le(a1, a2) -> Le(a1, a2)
 ;;
 
-Printf.printf "%s\n" (prop_to_string(bool2prop(bexp_01)));;
-Printf.printf "%s\n" (prop_to_string(bool2prop(bexp_09)));;
-
 (* Question 2. *)
 
+(*Find the t_prop by her name.*)
 let find_prop_context (name : string) (c : context) : t_prop = 
   try 
     (
@@ -962,6 +955,24 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
 (** 2.2.1 La logique des propositions *)
 (* Question 3. *)
 
+
+(* Fonction recursive appliquant une liste de tactics. *)
+let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
+  match goals with
+  | [] -> Printf.printf "No more goal. Qed.\n\n"
+  | curr_goal::tail_goals -> 
+    (
+      match tactics with
+      | [] -> Printf.printf "No more tactic. But there is still goals..\n"
+      | curr_tactic::tail_tactics -> 
+        print_goal curr_goal;
+        let new_goals = apply_tactic curr_tactic curr_goal in
+        if(new_goals = [])
+        then Printf.printf "Subgoal proved.\n\n\n";
+        apply_tactics (new_goals @ tail_goals) tail_tactics; 
+    )
+;;
+
 (* (P V Q => R) => (P => R) ^ (Q => R) *)
 let goal_q3 : goal = (
   [],
@@ -973,39 +984,24 @@ let goal_q3 : goal = (
     )
   )
 );;
-(*  *)
-let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
-  match goals with
-  | [] -> Printf.printf "No more goal. Qed.\n"
-  | curr_goal::tail_goals -> 
-    (
-      match tactics with
-      | [] -> Printf.printf "No more tactic. But there is still goals..\n"
-      | curr_tactic::tail_tactics -> 
-        print_goal curr_goal;
-        let new_goals = apply_tactic curr_tactic curr_goal in
-        if(new_goals = [])
-        then Printf.printf "Subgoal proved.\n";
-        apply_tactics (new_goals @ tail_goals) tail_tactics; 
-    )
-;;
 
+(*Preuve*)
 apply_tactics [goal_q3] 
 [
   Impl_Intro;
   And_Intro;
   Impl_Intro;
   (Assume(Or(prop_P, prop_Q)));
-  (Impl_Elim("H3","H5"));
-  (Exact("H6"));
-  Or_Intro_1;
+  (Impl_Elim("H1","H3"));
   (Exact("H4"));
+  Or_Intro_1;
+  (Exact("H2"));
   Impl_Intro;
   (Assume(Or(prop_P, prop_Q)));
-  (Impl_Elim("H3","H8"));
-  (Exact("H9"));
-  Or_Intro_2;
+  (Impl_Elim("H1","H6"));
   (Exact("H7"));
+  Or_Intro_2;
+  (Exact("H5"));
 ]
 ;;
 (** 2.2.2 La logique de Hoare *)
