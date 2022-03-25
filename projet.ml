@@ -968,7 +968,7 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     | Hoare(pre, prog, post) -> (
       match prog with
       | Loop(e, p) -> (
-        _ -> [] (* TODO *)
+        [] (* TODO *)
       )
       | _ -> failwith "Goal is not an Reapeat-statement"
     )
