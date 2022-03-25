@@ -918,7 +918,7 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     match cc with
     | Prop(p) -> (
       match p with
-      | Equal(_, _) | Le(_, _) | True -> []
+      | Equal(_, _) | Le(_, _) | True | False -> []
       | _ -> failwith "Tactic failure: We can admit this."
     )
     | _ -> failwith "Tactic failure: The conclusion is not a logical proposition."
@@ -949,12 +949,28 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
-  | HSeq(p) -> (
+  | HIf -> (
     match cc with
     | Hoare(pre, prog, post) -> (
       match prog with
-      | Seq(prog1, prog2) -> [(ct, Hoare(pre, prog1, p)); (ct, Hoare(p, prog2, post));]
-      | _ -> failwith "Goal is not an assignment"
+      | Cond(b,then_p, else_p) -> (
+        [
+          (ct, Hoare(And(pre, (bool2prop b)), then_p, post));
+          (ct, Hoare(And(pre, Not((bool2prop b))), else_p, post))
+        ]
+      )
+      | _ -> failwith "Goal is not an if-statement"
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
+  | HRepeat(i) -> (
+    match cc with
+    | Hoare(pre, prog, post) -> (
+      match prog with
+      | Loop(e, p) -> (
+        _ -> [] (* TODO *)
+      )
+      | _ -> failwith "Goal is not an Reapeat-statement"
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
@@ -971,25 +987,15 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
-  | HIf -> (
+  | HSeq(p) -> (
     match cc with
     | Hoare(pre, prog, post) -> (
       match prog with
-      | Cond(b,then_p, else_p) -> (
-        [
-          (ct, Hoare(And(pre, (bool2prop b)), then_p, post));
-          (ct, Hoare(And(pre, Not((bool2prop b))), else_p, post))
-        ]
-      )
-      | _ -> failwith "Goal is not an if-statement"
+      | Seq(prog1, prog2) -> [(ct, Hoare(pre, prog1, p)); (ct, Hoare(p, prog2, post));]
+      | _ -> failwith "Goal is not an assignment"
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
-  (*
-| HIf
-| HRepeat(v)
-  *)
-  | _ -> failwith "Not supported yet.."
 ;;
 
 (** 2.2.1 La logique des propositions *)
@@ -1172,10 +1178,14 @@ apply_tactics [goal_q4_5]
   And_Intro;
   Admit;
   Admit;
+  HAssign;
   HCons(Le(Const(0), Var("v")), Le(Const(0), Var("r")));
   Impl_Intro;
+  And_Intro;
   Admit;
-  HAssign;
+  Not_Intro;
+  Admit;
+  HAssign
 ];;
 
 (* Question 6. *)
