@@ -971,7 +971,20 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     )
     | _ -> failwith "Goal is not a Hoare formula"
   )
-
+  | HIf -> (
+    match cc with
+    | Hoare(pre, prog, post) -> (
+      match prog with
+      | Cond(b,then_p, else_p) -> (
+        [
+          (ct, Hoare(And(pre, (bool2prop b)), then_p, post));
+          (ct, Hoare(And(pre, Not((bool2prop b))), else_p, post))
+        ]
+      )
+      | _ -> failwith "Goal is not an if-statement"
+    )
+    | _ -> failwith "Goal is not a Hoare formula"
+  )
   (*
 | HIf
 | HRepeat(v)
@@ -1075,7 +1088,7 @@ apply_tactics [goal_q4_3]
   HAssign
 ];;
 
-(* {True} z := x; z := z+y; u := z {u = x + y} *)
+(* {True} z := x; z := z  +y; u := z {u = x + y} *)
 let goal_q4_4 = 
   ( [],
     Hoare
@@ -1095,7 +1108,7 @@ let goal_q4_4 =
       )
     )
   );;
-(**
+(*
   Hoare_sequence_rule with (z = x + y).
   Hoare_sequence_rule with (z + y = x + y).
   Hoare_consequence_rule with (x + y = x + y) and (z + y = x + y).
@@ -1116,3 +1129,70 @@ apply_tactics [goal_q4_4]
 ];;
 
 (* Question 5. *)
+
+(* 
+{True} 
+   if v <= 0 
+   then r := 0-v 
+   else r := v 
+{0 <= r} 
+*)
+let goal_q4_5 = 
+  ( [],
+    Hoare
+    (
+      (
+        True, 
+        Cond
+        (
+          Le(Var("v"), Const(0)),
+          Aff("r", Ope(Const(0), Var("v"), MINUS)),
+          Aff("r", Var("v"))
+        ),
+        Le(Const(0), Var("r"))
+      )
+    )
+  );;
+
+(*
+  Hoare_if_rule.
+  Hoare_consequence_rule with (0 <= 0 - v ) and (0 <= r).
+  Hoare_assignment_rule.
+  Hoare_consequence_rule with (0 <= v ) and (0 <= r).
+  Impl_Intro.
+  lia.
+  Hoare_assignment_rule.
+*)
+Printf.printf "\nQuestion 5.\n";;
+apply_tactics [goal_q4_5] 
+[
+  HIf;
+  HCons(Le(Const(0), Ope(Const(0), Var("v"), MINUS)), Le(Const(0), Var("r")));
+  Impl_Intro;
+  And_Intro;
+  Admit;
+  Admit;
+  HCons(Le(Const(0), Var("v")), Le(Const(0), Var("r")));
+  Impl_Intro;
+  Admit;
+  HAssign;
+];;
+
+(* Question 6. *)
+
+(* {x = y} repeat 10 do x:= x+1 od {x = y + 10} *)
+(* Invariant : x <= y ???? *)
+  
+let goal_q4_6 = 
+  ( [],
+    Hoare
+    (
+      (
+        Equal(Var("x"), Var("y")), 
+        Loop(Const(10), Aff("x", Ope(Var("x"), Const(1), ADD))), 
+        Equal(Var("x"), Ope(Var("y"), Const(10), ADD))
+      )
+    )
+  );;
+
+(* Preuve *)
