@@ -968,7 +968,16 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
     | Hoare(pre, prog, post) -> (
       match prog with
       | Loop(e, p) -> (
-        [] (* TODO *)
+        let inv : t_prop = pre in
+        if (post = And(inv, Equal(Var(i), Ope(e, Const(1), ADD))))
+        then [
+          ct, Hoare(
+            And(inv, Le(Var(i), e)),
+            Seq(p, Aff(i, Ope(Var(i), Const(1), ADD))),
+            inv
+          )
+        ]
+        else failwith "TODO"
       )
       | _ -> failwith "Goal is not an Reapeat-statement"
     )
@@ -1191,8 +1200,7 @@ apply_tactics [goal_q4_5]
 (* Question 6. *)
 
 (* {x = y} repeat 10 do x:= x+1 od {x = y + 10} *)
-(* Invariant : x <= y ???? *)
-  
+
 let goal_q4_6 = 
   ( [],
     Hoare
@@ -1203,6 +1211,26 @@ let goal_q4_6 =
         Equal(Var("x"), Ope(Var("y"), Const(10), ADD))
       )
     )
-  );;
+  )
+;;
 
 (* Preuve *)
+
+(* 
+  { x = y }
+  { x = y + 1 - 1}
+  repeat 10 do
+  {( x = y + i - 1) /\ ( i <= 10)}
+  {( x + 1) = y + ( i + 1) - 1}
+  x := x + 1
+  { x = y + ( i + 1) + 1}
+  od
+  {( x = y + i - 1) /\ ( i = 10 + 1)}
+  { x = y + 10} 
+*)
+  
+
+apply_tactics [goal_q4_6]
+[
+  
+]
