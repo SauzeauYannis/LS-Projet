@@ -1,6 +1,5 @@
 (** 
-  Un interpréteur pour un langage imperatif et un prouveur en logique de Hoare 
-  et un prouveur en logique de Hoare.
+  Un interpréteur pour un langage impératif et un prouveur en logique de Hoare 
   @author Frejoux Gaetan, Niord Mathieu & Sauzeau Yannis
 *)
 
@@ -28,16 +27,14 @@ let print_header_results (exercise : int) (section : int) (question : int) (resu
   Printf.printf ("\n")
 ;;
 
-(* 1. Un interpreteur pour un langage imperatif *)
-(* 1.1 Les expressions arithmetiques *)
-(* 1.1.1 Syntaxe abstraite*)
-Printf.printf 
-"1. Un interpreteur pour un langage imperatif\n 
-1.1 Les expressions arithmetiques\n 
-1.1.1 Syntaxe abstraite\n";;
+Printf.printf "
+1. Un interpreteur pour un langage imperatif
 
-(* Question 1. *)
-Printf.printf "Question 1\n";;
+1.1 Les expressions arithmetiques
+
+1.1.1 Syntaxe abstraite
+
+Question 1\n\n";;
 
 (** Type énuméré [operator] : Addition, Soustraction et Multiplication. *)
 type operator = ADD | MINUS | MULT;;
@@ -47,9 +44,7 @@ type aexp =
   | Var of string 
   | Ope of aexp * aexp * operator;;
 
-(* Question 2. *)
-Printf.printf "Question 2\n";;
-
+Printf.printf "Question 2\n\n";;
 
 (* (2) *)
 let aexp_01 = Const(2);;
@@ -93,9 +88,7 @@ let aexp_09 = Ope(
   )
 ;;
 
-
-(* Question 3. *)
-Printf.printf "Question 3\n";;
+Printf.printf "Question 3\n\n";;
 
 (* 3.1 *)
 let operator_to_string (o : operator) : string =
@@ -127,17 +120,13 @@ print_header_results 1 1 3 [
 ] (aexp_to_string)
 ;;
 
+Printf.printf "1.1.2 Interpretation\n\n";;
 
-(** 1.1.2 Interprétation *)
-Printf.printf "1.1.2 Interprétation\n";;
-
-(** Question 4. *)
-Printf.printf "Question 4\n";;
+Printf.printf "Question 4\n\n";;
 
 type valuation = (string * int) list;;
 
-(** Question 5. *)
-Printf.printf "Question 5\n";;
+Printf.printf "Question 5\n\n";;
 
 let compute (e : aexp) : int =
   match e with
@@ -168,7 +157,7 @@ let rec ainterp (e : aexp) (v : valuation) : int =
 ;;
 
 (** Question 6. *)
-Printf.printf "Question 6\n";;
+Printf.printf "Question 6\n\n";;
 
 let aexp_valuation : valuation = [("x", 5); ("y", 9)];;
 
@@ -185,12 +174,9 @@ print_header_results 1 1 6 [
 ] (Int.to_string)
 ;;
 
+Printf.printf "1.1.3 Substitutions\n\n";;
 
-(** 1.1.3 Substitutions *)
-Printf.printf "1.1.3 Substitutions\n";;
-
-(** Question 7. *)
-Printf.printf "Question 7\n";;
+Printf.printf "Question 7\n\n";;
 
 let rec asubst (var : string) (subst : aexp) (e : aexp) : aexp =
   match e with
@@ -205,8 +191,7 @@ let asubst_list (subs : (string * aexp) list) (e : aexp) : aexp =
   !res
 ;;
 
-(** Question 8. *)
-Printf.printf "Question 8\n";;
+Printf.printf "Question 8\n\n";;
 
 let x_subst : aexp = Const(7);;
 let y_subst : aexp = Ope(Var("z"), Const(2), ADD);;
@@ -226,15 +211,11 @@ print_header_results 1 1 8 [
 ] (aexp_to_string)
 ;;
 
+Printf.printf "1. Les expressions booleennes\n\n";;
 
-(** 1. Les expressions booléennes *)
-Printf.printf "1. Les expressions booléennes\n";;
+Printf.printf "1.2.1 Syntaxe abstraite\n\n";;
 
-(** 1.2.1 Syntaxe abstraite *)
-Printf.printf "1.2.1 Syntaxe abstraite\n";;
-
-(** Question 1. *)
-Printf.printf "Question 1\n";;
+Printf.printf "Question 1\n\n";;
 
 type bexp = 
   | True | False 
@@ -244,9 +225,7 @@ type bexp =
   | Le of aexp * aexp (* "Le" signifie "less or equal than to". *)
 ;;
 
-(** Question 2. *)
-Printf.printf "Question 2\n";;
-
+Printf.printf "Question 2\n\n";;
 
 (* (vrai) *)
 let bexp_01 : bexp = True;;
@@ -282,9 +261,7 @@ let bexp_09 : bexp = And(
     Le(Ope(Const(3), Var("x"), ADD), Ope(Const(4), Var("y"), MULT))
   );;
 
-(** Question 3. *)
-Printf.printf "Question 3\n";;
-
+Printf.printf "Question 3\n\n";;
 
 (* 3.1 *)
 let rec bexp_to_string (b : bexp) : string =
@@ -312,14 +289,9 @@ print_header_results 1 2 3 [
 ] (bexp_to_string)
 ;;
 
+Printf.printf "1.2.2 Interpretation\n\n";;
 
-(** 1.2.2 Interprétation *)
-Printf.printf "1.2.2 Interprétation\n";;
-
-
-(** Question 4. *)
-Printf.printf "Question 4\n";;
-
+Printf.printf "Question 4\n\n";;
 
 let rec binterp (b : bexp) (v : valuation) : bool =
   match b with
@@ -332,8 +304,7 @@ let rec binterp (b : bexp) (v : valuation) : bool =
   | Le(l,r) -> (ainterp l v) <= (ainterp r v)
 ;;
 
-(** Question 5. *)
-Printf.printf "Question 5\n";;
+Printf.printf "Question 5\n\n";;
 
 let bexp_valuation : valuation = [("x", 7); ("y", 3)];;
 
@@ -350,15 +321,11 @@ print_header_results 1 2 5 [
 ] (Bool.to_string)
 ;;
 
+Printf.printf "1.3 Les commandes du langage\n\n";;
 
-(** 1.3 Les commandes du langage *)
-Printf.printf "1.3 Les commandes du langage\n";;
+Printf.printf "1.3.1 Syntaxe abstraite\n\n";;
 
-(** 1.3.1 Syntaxe abstraite *)
-Printf.printf "1.3.1 Syntaxe abstraite\n";;
-
-(** Question 1. *)
-Printf.printf "Question 1\n";;
+Printf.printf "Question 1\n\n";;
 
 type prog = 
   | Skip
@@ -368,8 +335,7 @@ type prog =
   | Loop of aexp * prog
 ;;
 
-(** Question 2. *)
-Printf.printf "Question 2\n";;
+Printf.printf "Question 2\n\n";;
 
 (* (y := 7) *)
 let prog_01 = Aff("y", Const(7));;
@@ -403,8 +369,7 @@ let prog_04 = Loop
     )
 ;;
 
-(** Question 3. *)
-Printf.printf "Question 3\n";;
+Printf.printf "Question 3\n\n";;
 
 let rec prog_to_string (program: prog) : string =
   match program with
@@ -423,11 +388,9 @@ print_header_results 1 3 3 [
 ] (prog_to_string)
 ;;
 
-(** 1.3.2 Interprétation *)
-Printf.printf "1.3.2 Interprétation\n";;
+Printf.printf "1.3.2 Interpretation\n\n";;
 
-(** Question 4. *)
-Printf.printf "Question 4\n";;
+Printf.printf "Question 4\n\n";;
 
 let rec selfcompose (f : 'a -> 'a) (n : int) : 'a -> 'a = 
   if (n <= 0)
@@ -435,13 +398,11 @@ let rec selfcompose (f : 'a -> 'a) (n : int) : 'a -> 'a =
   else (fun x -> (selfcompose f (n - 1)) (f x))
 ;;
 
-(** Question 5. *)
-Printf.printf "Question 5\n";;
+Printf.printf "Question 5\n\n";;
 
 Printf.printf "10 fois => f: x -> x + 2: %d\n\n" ((selfcompose (fun x -> x + 2) 10) (0));;
 
-(** Question 6. *)
-Printf.printf "Question 6\n";;
+Printf.printf "Question 6\n\n";;
 
 let rec exec (p : prog) (v : valuation) : valuation =
   match p with
@@ -452,8 +413,7 @@ let rec exec (p : prog) (v : valuation) : valuation =
   | Loop(e, p1) -> (selfcompose (fun nv -> exec p1 nv) (ainterp e v)) (v)
 ;;
 
-(** Question 7. *)
-Printf.printf "Question 7\n";;
+Printf.printf "Question 7\n\n";;
 
 let prog_fact : prog = 
   Seq
@@ -515,14 +475,11 @@ let fibo (n : int) : int =
 
 Printf.printf "8ème nombre de la suite de Fibonacci = %d\n\n" (fibo 8);;
 
-(** 1.4 Triplets de Hoare et validité *)
-Printf.printf "1.4 Triplets de Hoare et validité\n";;
+Printf.printf "1.4 Triplets de Hoare et validite\n\n";;
 
-(** 1.4.1 Syntaxe abstraite des formules de la logiques des propositions *)
-Printf.printf "1.4.1 Syntaxe abstraite des formules de la logiques des propositions\n";;
+Printf.printf "1.4.1 Syntaxe abstraite des formules de la logiques des propositions\n\n";;
 
-(** Question 1. *)
-Printf.printf "Question 1\n";;
+Printf.printf "Question 1\n\n";;
 
 type t_prop = 
   | True | False 
@@ -533,7 +490,7 @@ type t_prop =
   | Impl of t_prop * t_prop
 ;;
 
-(** Question 2. *)
+Printf.printf "Question 2\n\n";;
 
 (* (vrai) *)
 let prop_01 : t_prop = True;;
@@ -574,8 +531,7 @@ let prop_11 : t_prop = Impl(
     Le(Var("y"), Const(0))
   );;
 
-(** Question 3. *)
-Printf.printf "Question 3\n";;
+Printf.printf "Question 3\n\n";;
 
 let rec prop_to_string (prop : t_prop) : string =
   match prop with
@@ -588,7 +544,6 @@ let rec prop_to_string (prop : t_prop) : string =
   | Le(l, r) -> "(" ^ (aexp_to_string l) ^ " <= " ^ (aexp_to_string r) ^ ")"
   | Impl(l, r) ->  "(" ^ (prop_to_string l) ^ " implique " ^ (prop_to_string r) ^ ")"
 ;;
-
 
 print_header_results 1 4 1 ([
     (prop_01, "vrai");
@@ -605,11 +560,9 @@ print_header_results 1 4 1 ([
   ]) (prop_to_string)
 ;;
 
-(** 1.4.2 Interprétation *)
-Printf.printf "1.4.2 Interprétation\n";;
+Printf.printf "1.4.2 Interpretation\n\n";;
 
-(** Question 4. *)
-Printf.printf "Question 4\n";;
+Printf.printf "Question 4\n\n";;
 
 let rec pinterp (prop : t_prop) (v : valuation) : bool =
   match prop with
@@ -623,8 +576,7 @@ let rec pinterp (prop : t_prop) (v : valuation) : bool =
   | Impl(p, q) -> (not (pinterp p v)) || (pinterp q v)
 ;;
 
-(** Question 5. *)
-Printf.printf "Question 5\n";;
+Printf.printf "Question 5\n\n";;
 
 let t_prop_valuation : valuation = [("x", 7); ("y", 3)];;
 
@@ -643,11 +595,9 @@ print_header_results 1 4 5 [
 ] (Bool.to_string)
 ;;
 
-(** 1.4.3 Substitutions *)
-Printf.printf "1.4.3 Substitutions\n";;
+Printf.printf "1.4.3 Substitutions\n\n";;
 
-(** Question 6. *)
-Printf.printf "Question 6\n";;
+Printf.printf "Question 6\n\n";;
 
 let rec psubst (var : string) (subst : aexp) (p : t_prop) : t_prop =
   match p with
@@ -666,8 +616,7 @@ let psubst_list (subs : (string * aexp) list) (p : t_prop) : t_prop =
   !res
 ;;
 
-(* Question 7. *)
-Printf.printf "Question 7\n";;
+Printf.printf "Question 7\n\n";;
 
 let x_subst : aexp = Ope(Const(3), Var("y"), MULT);;
 let y_subst : aexp = Ope(Var("k"), Const(2), ADD);;
@@ -689,16 +638,13 @@ print_header_results 1 4 7 [
 ] (prop_to_string)
 ;;
 
-(** 1.4.4 Les triplets de Hoare *)
-Printf.printf "1.4.4 Les triplets de Hoare\n";;
+Printf.printf "1.4.4 Les triplets de Hoare\n\n";;
 
-(* Question 8. *)
-Printf.printf "Question 8\n";;
+Printf.printf "Question 8\n\n";;
 
 type hoare_triple = t_prop * prog * t_prop;;
 
-(* Question 9. *)
-Printf.printf "Question 9\n";;
+Printf.printf "Question 9\n\n";;
 
 (* {x = 2} skip {x = 2} *) 
 let hoare_01 = (
@@ -715,8 +661,7 @@ let hoare_02 = (
 ;;
 
 (* {True} if x <= 0 then r := 0-x else r := x {0 <= r} *)
-let hoare_03 =
-  (
+let hoare_03 = (
     True,
     Cond
       (
@@ -729,19 +674,16 @@ let hoare_03 =
 ;;
 
 (* {in = 5 et out = 1} fact {in = 0 et out = 120} *)
-let hoare_04 = 
-  (
+let hoare_04 = (
     And(Equal(Var("in"), Const(5)), Equal(Var("out"), Const(1))),
     prog_fact,
     And(Equal(Var("in"), Const(0)), Equal(Var("out"), Const(120)))
   )
 ;;
 
-(** 1.4.5 Validité d’un triplet de Hoare *)
-Printf.printf "1.4.5 Validité d’un triplet de Hoare\n";;
+Printf.printf "1.4.5 Validité d un triplet de Hoare\n\n";;
 
-(* Question 10. *)
-Printf.printf "Question 10\n";;
+Printf.printf "Question 10\n\n";;
 
 let htvalid_test (ht : hoare_triple) (v : valuation) : bool =
   let (pre, p, post) : t_prop * prog * t_prop = ht in
@@ -760,18 +702,13 @@ Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 0)]);;
 Printf.printf "%B\n" (htvalid_test hoare_03 [("x", 1)]);;
 Printf.printf "%B\n\n" (htvalid_test hoare_04 [("in", 5); ("out", 1)]);;
 
+Printf.printf "2. Un (mini) prouveur en logique de Hoare\n\n";;
 
-(** 2. Un (mini) prouveur en logique de Hoare*)
-Printf.printf "2. Un (mini) prouveur en logique de Hoare\n";;
+Printf.printf "2.1 Les buts de preuves et le langage des tactiques\n\n";;
 
-(** 2.1 Les buts de preuves et le langage des tactiques *)
-Printf.printf "2.1 Les buts de preuves et le langage des tactiques\n";;
+Printf.printf "2.1.1 Les buts de preuves\n\n";;
 
-(** 2.1.1 Les buts de preuves *)
-Printf.printf "2.1.1 Les buts de preuves\n";;
-
-(* Question 1. *)
-Printf.printf "Question 1\n";;
+Printf.printf "Question 1\n\n";;
 
 type context = (string * t_prop) list;;
 
@@ -782,8 +719,7 @@ type conclusion =
 
 type goal = context * conclusion;;
 
-(* Question 2. *)
-Printf.printf "Question 2\n";;
+Printf.printf "Question 2\n\n";;
 
 let prop_P : t_prop = True;;
 let prop_Q : t_prop = False;;
@@ -792,7 +728,8 @@ let prop_R : t_prop = True;;
 let goal_01 : goal = (
   [("H", Impl(Or(prop_P, prop_Q), prop_R)); ("H2", prop_P)],
   Prop(Or(prop_P, prop_Q))
-);;
+)
+;;
 
 let goal_02 : goal = (
   [],
@@ -805,14 +742,13 @@ let goal_02 : goal = (
     ),
     Equal(Var("x"), Const(3))
   )
-);;
+)
+;;
 
-(* Question 3. *)
-Printf.printf "Question 3\n";;
+Printf.printf "Question 3\n\n";;
 
 let hoare_to_string (hoare : hoare_triple) : string = 
-  let (pre, prog, post) : t_prop * prog * t_prop = hoare in 
-  (
+  let (pre, prog, post) : t_prop * prog * t_prop = hoare in (
     "{ " ^ (prop_to_string pre) ^ " }\n" ^
     (prog_to_string prog) ^ "\n" ^
     "{ " ^ (prop_to_string post) ^ " }"
@@ -822,7 +758,7 @@ let hoare_to_string (hoare : hoare_triple) : string =
 let print_goal (g : goal) : unit =
   let (ct, cc) : context * conclusion = g in
   List.iter (fun (v, p) -> Printf.printf "%s : %s\n" v (prop_to_string p)) ct;
-  Printf.printf "===================================\n";
+  Printf.printf "========================================================================================\n";
   match cc with
   | Hoare(h) -> Printf.printf "%s\n\n" (hoare_to_string h);
   | Prop(p) -> Printf.printf "%s\n\n" (prop_to_string p);
@@ -838,33 +774,66 @@ let fresh_ident =
                   prefix ^ (string_of_int (!count)))
 ;;
 
-(** 2.1.2 La règle de déduction pour la boucle *)
-Printf.printf "2.1.2 La règle de déduction pour la boucle\n";;
+Printf.printf "2.1.2 La regle de deduction pour la boucle\n\n";;
 
-(* Question 4. *)
-Printf.printf "Question 4\n";;
+Printf.printf "Question 4\n\n";;
 
 Printf.printf "
-                                                             ========================================================= Assign\n
-(x = y + i - 1) /\\ (i <= 10) => (x + 1) = y + (i + 1) - 1    {(x + 1) = y + (i + 1) - 1} x:= x+1 {x = y + (i + 1) - 1}    x = y + (i + 1) - 1 => x = y + (i + 1) - 1\n
-==================================================================================================================================================================== Cons\n
-                                         {(x = y + i - 1) /\\ (i <= 10)} x:= x+1 {x = y + (i + 1) - 1}\n
-                                ========================================================================= Repeat\n
-      x = y => x = y + 1 - 1    {x = y + 1 - 1} repeat 10 do x:= x+1 od {(x = y + i - 1) /\\ (i = 10 + 1)}    x = y + 10 => (x = y + i - 1) /\\ (i = 10 + 1)\n
-      ==================================================================================================================================================== Cons\n
-                                                    {x = y} repeat 10 do x:= x+1 od {x = y + 10}\n"
+                                                             ========================================================= Assign
+(x = y + i - 1) /\\ (i <= 10) => (x + 1) = y + (i + 1) - 1    {(x + 1) = y + (i + 1) - 1} x:= x+1 {x = y + (i + 1) - 1}    x = y + (i + 1) - 1 => x = y + (i + 1) - 1
+==================================================================================================================================================================== Cons
+                                         {(x = y + i - 1) /\\ (i <= 10)} x:= x+1 {x = y + (i + 1) - 1}
+                                ========================================================================= Repeat
+      x = y => x = y + 1 - 1    {x = y + 1 - 1} repeat 10 do x:= x+1 od {(x = y + i - 1) /\\ (i = 10 + 1)}    x = y + 10 => (x = y + i - 1) /\\ (i = 10 + 1)
+      ==================================================================================================================================================== Cons
+                                                    {x = y} repeat 10 do x:= x+1 od {x = y + 10}\n\n"
 ;;
 
-(* Question 5. *)
-Printf.printf "Question 5\n";;
+Printf.printf "Question 5\n\n";;
 
-(* TODO *)
+Printf.printf "
+I = (r = i * (i - 1) / 2) /\ (n = i)
 
-(** 2.1.3 Le langage des tactiques *)
-Printf.printf "2.1.3 Le langage des tactiques\n";;
++------+---+---+----+-----------------+
+| tour | i | n | r  | i * (i - 1) / 2 |
++------+---+---+----+-----------------+
+|  0   | 1 | 1 | 0  |        0        |
+|  1   | 2 | 2 | 1  |        1        |
+|  2   | 3 | 3 | 3  |        3        |
+|  3   | 4 | 4 | 6  |        6        |
+|  4   | 5 | 5 | 10 |        10       |
+|  5   | 6 | 6 | 15 |        15       |
++------+---+---+----+-----------------+
 
-(* Question 6. *)
-Printf.printf "Question 6\n";;
+{(r = 0) /\ (n = 1)}
+{(r = 1 * (1 - 1) / 2) /\ (n = 1)}
+repeat 5 do 
+  {((r = 1 * (i - 1) / 2) /\ (n = i)) /\ (i <= 5)}
+  {((r + n) = 1 * ((i + 1) - 1) / 2) /\ ((n + 1) = (i + 1))}
+  r := r + n;
+  {(r = 1 * ((i + 1) - 1) / 2) /\ ((n + 1) = (i + 1))}
+  n := n + 1
+  {(r = 1 * ((i + 1) - 1) / 2) /\ (n = (i + 1))}
+od 
+{((r = 1 * (i - 1) / 2) /\ (n = i)) /\ (i = 5 + 1)}
+{(r = 15) /\ (n = 6)}
+
+
+                                                                                                                ============================================================================================================================ Assign
+((r = 1 * (i - 1) / 2) /\\ (n = i)) /\ (i <= 5) => ((r + n) = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))    {((r + n) = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))} r := r + n {(r = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))}   (r = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1)) => (r = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))
+========================================================================================================================================================================================================================================================================================================================================================= Cons    ================================================================================================================ Assign
+                                                                        {((r = 1 * (i - 1) / 2) /\\ (n = i)) /\ (i <= 5)} r := r + n {(r = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))}                                                                                                                                                                        {(r = 1 * ((i + 1) - 1) / 2) /\\ ((n + 1) = (i + 1))} n := n + 1 {(r = 1 * ((i + 1) - 1) / 2) /\\ (n = (i + 1))}
+================================================================================================================================================================================================================================================================================================================================================================================================================================================================================== Seq
+                                                                                                                                                          {((r = 1 * (i - 1) / 2) /\\ (n = i)) /\ (i <= 5)} r := r + n; n := n + 1 {(r = 1 * ((i + 1) - 1) / 2) /\\ (n = (i + 1))}
+                                                                                                                                                          ======================================================================================================================== Repeat
+                                                                                                            (r = 0) /\\ (n = 1) => (r = 1 * (1 - 1) / 2) /\\ (n = 1)    {(r = 1 * (1 - 1) / 2) /\\ (n = 1)} repeat 5 do r := r + n; n := n + 1 od {((r = 1 * (i - 1) / 2) /\\ (n = i)) /\\ (i = 5 + 1)}    (r = 15) /\\ (n = 6) => ((r = 1 * (i - 1) / 2) /\\ (n = i)) /\\ (i = 5 + 1)
+                                                                                                            =========================================================================================================================================================================================================================================================================== Cons
+                                                                                                                                                                {(r = 0) /\ (n = 1)} repeat 5 do r := r + n; n := n + 1 od {(r = 15) /\ (n = 6)}\n\n"
+;;
+
+Printf.printf "2.1.3 Le langage des tactiques\n\n";;
+
+Printf.printf "Question 6\n\n";;
 
 type tactic =
   (* Partie logique des propositions *)
@@ -890,11 +859,9 @@ type tactic =
   | HSeq of t_prop
 ;;
 
-(** 2.2 Appliquer une tactique à un but *)
-Printf.printf "2.2 Appliquer une tactique à un but\n";;
+Printf.printf "2.2 Appliquer une tactique a un but\n\n";;
 
-(* Question 1. *)
-Printf.printf "Question 1\n";;
+Printf.printf "Question 1\n\n";;
 
 let rec bool2prop (be : bexp) : t_prop  =
   match be with
@@ -907,10 +874,8 @@ let rec bool2prop (be : bexp) : t_prop  =
   | Le(a1, a2) -> Le(a1, a2)
 ;;
 
-(* Question 2. *)
-Printf.printf "Question 2\n";;
+Printf.printf "Question 2\n\n";;
 
-(*Find the t_prop by her name.*)
 let find_prop_context (name : string) (c : context) : t_prop = 
   try 
     (
@@ -1055,9 +1020,9 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
               psubst i (Ope(Var("i"), Const(1), ADD)) p1
             )
           ]
-          else failwith "TODO 2"
+          else failwith "Post condition is not of the right form"
         )
-        | _ -> failwith "TODO 1"
+        | _ -> failwith "Post condition is not of the right form"
       )
       | _ -> failwith "Goal is not an Reapeat-statement"
     )
@@ -1087,13 +1052,11 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
   )
 ;;
 
-(** 2.2.1 La logique des propositions *)
-Printf.printf "2.2.1 La logique des propositions\n";;
+Printf.printf "2.2.1 La logique des propositions\n\n";;
 
-(** Question 3. *)
-Printf.printf "Question 3\n";;
+Printf.printf "Question 3\n\n";;
 
-(* Fonction recursive appliquant une liste de tactics. *)
+(* Fonction récursive appliquant une liste de tactic *)
 let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
   Printf.printf "|-------------------------------------------------|\n";
   Printf.printf "|---------          Apply tactic         ---------|\n";
@@ -1149,21 +1112,17 @@ apply_tactics [goal_q3]
 ]
 ;;
 
-(** 2.2.2 La logique de Hoare *)
-Printf.printf "\n2.2.2 La logique de Hoare\n";;
+Printf.printf "2.2.2 La logique de Hoare\n\n";;
 
-(* Question 4. *)
-Printf.printf "\nQuestion 4.\n";;
+Printf.printf "Question 4.\n\n";;
 
-(* {x = 2} skip {x = 2} *)
-Printf.printf "Preuve de {x = 2} skip {x = 2}\n";;
+Printf.printf "Preuve de {x = 2} skip {x = 2}\n\n";;
 
 let hoare_q4_1 = hoare_01;;
 let goal_q4_1 = ([], Hoare(hoare_q4_1));;
 apply_tactics [goal_q4_1] [HSkip];;
 
-(* {y + 1 < 4} y := y + 1 {y < 4} *)
-Printf.printf "Preuve de {y + 1 < 4} y := y + 1 {y < 4}\n";;
+Printf.printf "Preuve de {y + 1 < 4} y := y + 1 {y < 4}\n\n";;
 
 let hoare_q4_2 = (
   Le(Ope(Var("y"), Const(1), ADD), Const(4)), 
@@ -1175,8 +1134,7 @@ let goal_q4_2 =([], Hoare(hoare_q4_2));;
 
 apply_tactics [goal_q4_2] [HAssign];;
 
-(* {y = 5} x := y + 1 {x = 6} *)
-Printf.printf "Preuve de {y = 5} x := y + 1 {x = 6}\n";;
+Printf.printf "Preuve de {y = 5} x := y + 1 {x = 6}\n\n";;
 
 let hoare_q4_3 = (
   Equal(Var("y"), Const(5)), 
@@ -1194,8 +1152,7 @@ apply_tactics [goal_q4_3]
   HAssign
 ];;
 
-(* {True} z := x; z := z  +y; u := z {u = x + y} *)
-Printf.printf "Preuve de {True} z := x; z := z  +y; u := z {u = x + y}\n";;
+Printf.printf "Preuve de {True} z := x; z := z  +y; u := z {u = x + y}\n\n";;
 
 let hoare_q4_4 = (
   True, 
@@ -1213,14 +1170,6 @@ let hoare_q4_4 = (
 
 let goal_q4_4 = ([], Hoare(hoare_q4_4));;
 
-(*
-  Hoare_sequence_rule with (z = x + y).
-  Hoare_sequence_rule with (z + y = x + y).
-  Hoare_consequence_rule with (x + y = x + y) and (z + y = x + y).
-  Hoare_assignment_rule.
-  Hoare_assignment_rule.
-  Hoare_assignment_rule.
-*)
 apply_tactics [goal_q4_4] 
 [
   HSeq(Equal(Var("z"), Ope(Var("x"), Var("y"), ADD)));
@@ -1233,20 +1182,12 @@ apply_tactics [goal_q4_4]
   HAssign
 ];;
 
-(* 
-{True} 
-   if v <= 0 
-   then r := 0-v 
-   else r := v 
-{0 <= r} 
-*)
-Printf.printf "Preuve de12\n
-{True}\n 
-   if v <= 0 \n
-   then r := 0-v \n
-   else r := v \n
-{0 <= r}\n";;
-
+Printf.printf "Preuve de
+{True}
+   if v <= 0
+   then r := 0-v
+   else r := v
+{0 <= r}\n\n";;
 
 let hoare_q4_5 = 
   (
@@ -1262,16 +1203,6 @@ let hoare_q4_5 =
 ;;
 
 let goal_q4_5 = ( [],Hoare(hoare_q4_5));;
-
-(*
-  Hoare_if_rule.
-  Hoare_consequence_rule with (0 <= 0 - v ) and (0 <= r).
-  Hoare_assignment_rule.
-  Hoare_consequence_rule with (0 <= v ) and (0 <= r).
-  Impl_Intro.
-  lia.
-  Hoare_assignment_rule.
-*)
 
 apply_tactics [goal_q4_5] 
 [
@@ -1292,8 +1223,7 @@ apply_tactics [goal_q4_5]
 ];;
 
 
-(* {x = y} repeat 10 do x:= x+1 od {x = y + 10} *)
-Printf.printf "Preuve de {x = y} repeat 10 do x:= x+1 od {x = y + 10}\n";;
+Printf.printf "Preuve de {x = y} repeat 10 do x:= x+1 od {x = y + 10}\n\n";;
 
 let hoare_q4_6 = (
   Equal(Var("x"), Var("y")), 
@@ -1303,19 +1233,6 @@ let hoare_q4_6 = (
 
 let goal_q4_6 = ([], Hoare(hoare_q4_6));;
 
-(* Preuve *)
-(* 
-  { x = y }
-  { x = y + 1 - 1}
-  repeat 10 do
-  {( x = y + i - 1) /\ ( i <= 10)}
-  {( x + 1) = y + ( i + 1) - 1}
-  x := x + 1
-  { x = y + ( i + 1) - 1}
-  od
-  {(x = y + i - 1) /\ (i = 10 + 1)}
-  { x = y + 10} 
-*)
 apply_tactics [goal_q4_6]
 [
   HCons(
@@ -1341,8 +1258,7 @@ apply_tactics [goal_q4_6]
   Admit;
 ];;
 
-(* Question 5. *)
-Printf.printf "\nQuestion 5.\n";;
+Printf.printf "\nQuestion 5.\n\n";;
 
 let valuation_to_string (v : valuation) : string =
   let result = ref "" in
@@ -1356,7 +1272,7 @@ let print_htvalid_test (hoare : hoare_triple) (valuation : valuation) (expected 
   Printf.printf "================================================================================\n";
   Printf.printf "Test de la validité de : \n%s\nAvec la valuation : %s\nAttendu : %B, obtenu : %B\n"
     (hoare_to_string hoare) (valuation_to_string valuation) (expected) (result);
-  Printf.printf "================================================================================\n"
+  Printf.printf "================================================================================\n\n"
 ;;
 
 (* {x = 2} skip {x = 2} *)
