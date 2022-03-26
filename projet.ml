@@ -969,15 +969,19 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
       match prog with
       | Loop(e, p) -> (
         let inv : t_prop = pre in
-        if (post = And(inv, Equal(Var(i), Ope(e, Const(1), ADD))))
-        then [
-          ct, Hoare(
-            And(inv, Le(Var(i), e)),
-            Seq(p, Aff(i, Ope(Var(i), Const(1), ADD))),
-            inv
-          )
-        ]
-        else failwith "TODO"
+        match post with
+        | And(p1, p2) -> (
+          if ((psubst i (Const(1)) p1) = inv)
+          then [
+            ct, Hoare(
+              And(p1, Le(Var(i), e)),
+              p,
+              psubst i (Ope(Var("i"), Const(1), ADD)) p1
+            )
+          ]
+          else failwith "TODO 2"
+        )
+        | _ -> failwith "TODO 1"
       )
       | _ -> failwith "Goal is not an Reapeat-statement"
     )
@@ -1012,18 +1016,25 @@ let apply_tactic (t : tactic) (g : goal) : goal list =
 
 (* Fonction recursive appliquant une liste de tactics. *)
 let rec apply_tactics (goals : goal list) (tactics : tactic list) : unit =
+  Printf.printf "|-------------------------------------------------|\n";
+  Printf.printf "|---------          Apply tactic         ---------|\n";
+  Printf.printf "|-------------------------------------------------|\n\n";
   match goals with
   | [] -> Printf.printf "No more goal. Qed.\n\n"
   | curr_goal::tail_goals -> 
     (
       match tactics with
-      | [] -> Printf.printf "No more tactic. But there is still goals..\n"
-      | curr_tactic::tail_tactics -> 
+      | [] -> (
+        print_goal curr_goal;
+        Printf.printf "No more tactic. But there is still %d goals..\n" (List.length goals)
+      )
+      | curr_tactic::tail_tactics -> (
         print_goal curr_goal;
         let new_goals = apply_tactic curr_tactic curr_goal in
-        if(new_goals = [])
+        if (new_goals = [])
         then Printf.printf "Subgoal proved.\n\n\n";
         apply_tactics (new_goals @ tail_goals) tail_tactics; 
+      )
     )
 ;;
 
@@ -1225,12 +1236,16 @@ let goal_q4_6 =
   x := x + 1
   { x = y + ( i + 1) + 1}
   od
-  {( x = y + i - 1) /\ ( i = 10 + 1)}
+  {(x = y + i - 1) /\ (i = 10 + 1)}
   { x = y + 10} 
 *)
   
-
 apply_tactics [goal_q4_6]
 [
-  
+  HCons(
+    Equal(Var("x"), Ope(Ope(Var("y"), Const(1), ADD), Const(1), MINUS)),
+    Equal(Var("x"), Ope(Var("y"), Const(10), ADD))
+  );
+  Impl_Intro;
+  Admit
 ]
