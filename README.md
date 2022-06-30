@@ -55,7 +55,7 @@ Pour exécuter notre projet, il suffit d'utiliser la commande `make` qui compile
 
 ### Résultat
 
-Nous avons obtenu la note de ?/20. (Résultat en juillet)
+Nous avons obtenu la note de 20/20.
 
 <a name="en"/>
 
@@ -99,4 +99,4 @@ To execute our project, you just have to use the command `make` which compiles t
 
 ### Result
 
-We obtained a score of ?/20. (Result in July)
+We obtained a score of 20/20.
